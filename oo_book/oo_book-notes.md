@@ -32,7 +32,7 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 ### Classes Define Objects
 
-  #### Instantiation
+#### Instantiation
 
 ## Questions
 
