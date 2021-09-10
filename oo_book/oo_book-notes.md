@@ -3,13 +3,15 @@
 - [The Object Model](#the-object-model)
   - [Why OOP?](#why-oop)
     - [A few Defintions](#a-few-definitions)
-    <!-- - [Encapsulation](#encapsulation)
-    - [Polymorphism](#polymorphism)
-    - [Inheritance](#inheritance)
-    - [Modules](#modules) -->
+      - [Encapsulation](#encapsulation)
+      - [Polymorphism](#polymorphism)
+      - [Inheritance](#inheritance)
+      - [Modules](#modules)
   - [What are Objects?](#what-are-objects)
   - [Classes Define Objects](#classes-define-objects)
+    - [Classes](#classes)
     - [Instantiation](#instantiation)
+  - [More Modules](#more-modules)
 
 - [Questions](#questions)
 
@@ -27,6 +29,7 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 - Polymorphism
 - Inheritance
 - Module
+  A module allows us to group reusable code into one place. We use modules in our classes by using the include method invocation, followed by the module name. Modules are also used as a namespace.
 
 ### What are Objects?
 
