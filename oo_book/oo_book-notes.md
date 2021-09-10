@@ -6,12 +6,13 @@
       - [Encapsulation](#encapsulation)
       - [Polymorphism](#polymorphism)
       - [Inheritance](#inheritance)
-      - [Modules](#modules)
+      - [Module](#module)
   - [What are Objects?](#what-are-objects)
   - [Classes Define Objects](#classes-define-objects)
     - [Classes](#classes)
     - [Instantiation](#instantiation)
-  - [More Modules](#more-modules)
+  - [Modules](#modules)
+  - [Method Lookup](#method-lookup)
 
 - [Questions](#questions)
 
@@ -25,7 +26,7 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 #### A Few Defintitions
 
-- Encapsulation
+- **Encapsulation**: is a form of data protection making it so that data cannot be manipulated without obvious intent. Encapsulation is how Ruby creates and defines boundaries by utilizing objects, and exposing interfaces (ie. methods) to interact with those objects.
 - Polymorphism
 - Inheritance
 - Module
@@ -35,7 +36,13 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 ### Classes Define Objects
 
+#### Classes
+
 #### Instantiation
+
+### Modules
+
+### Method Lookup
 
 ## Questions
 
