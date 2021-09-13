@@ -1,6 +1,6 @@
 # Object-Oriented Programming(OOP) Book: Notes
 
-- [The Object Model](#the-object-model)
+- [The Object Model](#part-1-the-object-model)
   - [Why OOP?](#why-oop)
     - [A few Defintions](#a-few-definitions)
       - [Encapsulation](#encapsulation)
@@ -13,12 +13,13 @@
     - [Instantiation](#instantiation)
   - [Modules](#modules)
   - [Method Lookup](#method-lookup)
+- [Part 2: Classes & Objects I](#part-2-classes-and-objects-i)
 
 - [Questions](#questions)
 
 ---
 
-## The Object Model
+## Part 1: The Object Model
 
 ### Why OOP?
 
@@ -26,11 +27,13 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 #### A Few Defintitions
 
-- **Encapsulation**: is a form of data protection making it so that data cannot be manipulated without obvious intent. Encapsulation is how Ruby creates and defines boundaries by utilizing objects, and exposing interfaces (ie. methods) to interact with those objects.
-- Polymorphism
-- Inheritance
-- Module
-  A module allows us to group reusable code into one place. We use modules in our classes by using the include method invocation, followed by the module name. Modules are also used as a namespace.
+- **Encapsulation**: is a form of data protection making it so that data cannot be manipulated without obvious intent. Encapsulation is how Ruby creates and defines boundaries by utilizing objects, and exposing interfaces (ie. methods) to interact with those objects. Another benefit of OOP is that it allows developers to think of objects as real-world nouns, making development friendlier to the developer, basically abstracting the logic one degree further.
+
+- **Polymorphism**: stands for 'many forms' and allows for different types of data to respond to a common interface. If a argument passed to a method is expecting the argument to have a `#move` method passed to it, the argument can be any object that has a `#move` method built into its class.
+
+- **Inheritance**: is the concept of a class inheriting the behavior of a parent class, referred to as a **superclass**. For example, a String object has behaviors/methods built into it's class (`String#chomp`, `String#count`, ...), but you can also call methods from the Object class (`Object#object_is`, `Object#to_s`, ...) on a String object, since the String class inherits from the Objects class.
+
+- **Module**: allows us to group reusable code into one place. We use modules in our classes by using the include method invocation, followed by the module name. Modules are also used as a namespace, where a number of classes can be defined within a module to categorize them.
 
 ### What are Objects?
 
@@ -44,13 +47,31 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 ### Method Lookup
 
+---
+
+## Part 2: Classes and Objects I
+
+### States and Behaviors
+
+---
+
 ## Questions
 
-- Why was OOP created and what purpose does it serve?
-- What is encapsulation?
-- What is polymorphism?
-- What does inherotance mean when referring to OOP?
-- What are modules?
-- What are Objects?
-- What defines an object in Ruby?
-- What is instantiation?
+- Part 1:
+  - Why was OOP created and what purpose does it serve?
+    - 
+  - What is encapsulation?
+  - What is polymorphism?
+  - What does inherotance mean when referring to OOP?
+  - What are modules?
+  - What can be considered an Object in Ruby?
+  - What defines an object in Ruby?
+  - What is instantiation?
+  - When naming classes and class files what is the proper format?
+  - What are modules used for?
+  - How do we add behaviors defined by a module to a custom class?
+  - what does method lookup refer to?
+- Part 2:
+  - s
+- Part 3:
+  - s
