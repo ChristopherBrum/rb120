@@ -14,6 +14,11 @@
   - [Modules](#modules)
   - [Method Lookup](#method-lookup)
 - [Part 2: Classes & Objects I](#part-2-classes-and-objects-i)
+  - [States and Behaviors](#states-and-behaviors)
+  - [Initializing a New Object](#initializing-a-new-behavior)
+    - [Initialize](#initialize)
+    - [Instance Variables](#instance-variables)
+  - [Instance Methods](#instance-methods)
 
 - [Questions](#questions)
 
@@ -53,13 +58,25 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
 
 ### States and Behaviors
 
+- **States** track attributes for indivbidual behaviors
+- **Behaviors** are what objects are capable of doing
+
+We use **instance variables** to store and track information (name, age, id number, etc.) of an instance of a class. Instance variables are scoped at the object (instance) level, and are how we keep track of an objects **state**.
+
+### Initializing a New Behavior
+
+#### Initialize
+
+#### Instance Variables
+
+### Instance Methods
+
 ---
 
 ## Questions
 
 - Part 1:
   - Why was OOP created and what purpose does it serve?
-    - 
   - What is encapsulation?
   - What is polymorphism?
   - What does inherotance mean when referring to OOP?
@@ -72,6 +89,11 @@ OOP was developed to help deal with growing codebases and their complexity. Prev
   - How do we add behaviors defined by a module to a custom class?
   - what does method lookup refer to?
 - Part 2:
-  - s
-- Part 3:
+  - What is state and how to we track it?
+  - What is behavior and how do we define it?
+  - How do we create a new instance of a class?
+  - What method is called when you create a new method, besides the `BasicObject#new` method, and why?
+  - What is an instance variable and why do we need them?
+  
+- Part 3
   - s
