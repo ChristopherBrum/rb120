@@ -19,7 +19,9 @@
     - [Initialize](#initialize)
     - [Instance Variables](#instance-variables)
   - [Instance Methods](#instance-methods)
-
+  - [Accessor Methods](#accessor-methods)
+  - [Calling Methods with Self](#calling-methods-with-self)
+- [Part 3: Classes & Objects II](#part-3-classes-and-objects-ii)
 - [Questions](#questions)
 
 ---
@@ -71,6 +73,13 @@ We use **instance variables** to store and track information (name, age, id numb
 
 ### Instance Methods
 
+### Accessor Methods
+
+#### Calling Methods with Self
+
+## Part 3: Classes and Objects II
+
+
 ---
 
 ## Questions
@@ -94,6 +103,13 @@ We use **instance variables** to store and track information (name, age, id numb
   - How do we create a new instance of a class?
   - What method is called when you create a new method, besides the `BasicObject#new` method, and why?
   - What is an instance variable and why do we need them?
-  
+  - Do objects of the same class have the same states and behaviors?
+  - When dealing with getter and setter methods how does Ruby's syntactical sugar help us?
+  - What naming convention should we keep in mind when dealing with getter and setter methods?
+  - What do setter methods always return?
+  - What built in accessors methods does Ruby provide and what do they take in as arguments?
+  - Instead of directly calling an instance variable from within an instance method, what is a preferable way of referencing the state of an object and why?
+  - What do we need to add to a setter method within an instance variable to update the state and why?
+  - When should we use the self keyword within an instance method?
 - Part 3
   - s
