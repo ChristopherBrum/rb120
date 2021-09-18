@@ -9,3 +9,8 @@
 - instance method
 - classes
 - mixin
+- instance method
+- class method
+- self
+- getter method
+- setter method

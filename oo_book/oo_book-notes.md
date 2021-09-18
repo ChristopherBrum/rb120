@@ -22,6 +22,11 @@
   - [Accessor Methods](#accessor-methods)
   - [Calling Methods with Self](#calling-methods-with-self)
 - [Part 3: Classes & Objects II](#part-3-classes-and-objects-ii)
+  - [Class Methods](#class-methods)
+  - [Constants](#constants)
+  - [The to_s Instance Method](#the-to-string-instance-method)
+  - [More About Self](#more-about-self)
+
 - [Questions](#questions)
 
 ---
@@ -79,12 +84,19 @@ We use **instance variables** to store and track information (name, age, id numb
 
 ## Part 3: Classes and Objects II
 
+### Class Methods
+
+### Constants
+
+### The to string Instance Method
+
+### More About Self
 
 ---
 
 ## Questions
 
-- Part 1:
+- Part 1: The Object Model
   - Why was OOP created and what purpose does it serve?
   - What is encapsulation?
   - What is polymorphism?
@@ -97,7 +109,7 @@ We use **instance variables** to store and track information (name, age, id numb
   - What are modules used for?
   - How do we add behaviors defined by a module to a custom class?
   - what does method lookup refer to?
-- Part 2:
+- Part 2: Classes and Objects I
   - What is state and how to we track it?
   - What is behavior and how do we define it?
   - How do we create a new instance of a class?
@@ -111,5 +123,17 @@ We use **instance variables** to store and track information (name, age, id numb
   - Instead of directly calling an instance variable from within an instance method, what is a preferable way of referencing the state of an object and why?
   - What do we need to add to a setter method within an instance variable to update the state and why?
   - When should we use the self keyword within an instance method?
-- Part 3
-  - s
+- Part 3: Classes and Objects II
+  - What is a class method and how do you define one?
+  - How do you call a class method vs. calling an instance method?
+  - Why would we need a class method?
+  - When does the initialize method get called?
+  - Why would we use a constant when we have class variables?
+  - In what circumstance would we not need to define instance variables within the initialize instance method?
+  - When calling the `puts` method, what other method is also called, and is it called always?
+  - What are the similarities and differences of the `puts` and the `p` methods?
+  - In what other circumstance is the `to_s` method automatically called?
+  - How can we use the `to_s` method within our own custom classes?
+  - Even though it's not always necessary, why is prepending getter and setter methods with `self` important?
+  - What are 2 clear things that we can `self` for?
+  - What are the boundaries of `self` within a class when determining whether oyu're referencing the class or an instance of the class?
