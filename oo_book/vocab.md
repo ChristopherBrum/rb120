@@ -1,6 +1,7 @@
 # Vocabulary Introduced in RB120
 
-- encapsulation
+- Encapsulation
+  - Encapsulation is...
 - polymorphism
 - module
 - inheritance
@@ -14,3 +15,5 @@
 - self
 - getter method
 - setter method
+- method lookup path
+- super

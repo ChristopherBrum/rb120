@@ -3,10 +3,6 @@
 - [The Object Model](#part-1-the-object-model)
   - [Why OOP?](#why-oop)
     - [A few Defintions](#a-few-definitions)
-      - [Encapsulation](#encapsulation)
-      - [Polymorphism](#polymorphism)
-      - [Inheritance](#inheritance)
-      - [Module](#module)
   - [What are Objects?](#what-are-objects)
   - [Classes Define Objects](#classes-define-objects)
     - [Classes](#classes)
@@ -16,8 +12,6 @@
 - [Part 2: Classes & Objects I](#part-2-classes-and-objects-i)
   - [States and Behaviors](#states-and-behaviors)
   - [Initializing a New Object](#initializing-a-new-behavior)
-    - [Initialize](#initialize)
-    - [Instance Variables](#instance-variables)
   - [Instance Methods](#instance-methods)
   - [Accessor Methods](#accessor-methods)
   - [Calling Methods with Self](#calling-methods-with-self)
@@ -26,6 +20,9 @@
   - [Constants](#constants)
   - [The to_s Instance Method](#the-to-string-instance-method)
   - [More About Self](#more-about-self)
+- [Part 4: Inheritance](#part-4-inheritance)
+  - [Class Inheritance](#class-inheritance)
+  - [Super](#super)
 
 - [Questions](#questions)
 
@@ -72,9 +69,8 @@ We use **instance variables** to store and track information (name, age, id numb
 
 ### Initializing a New Behavior
 
-#### Initialize
-
-#### Instance Variables
+- Initialize
+- Instance Variables
 
 ### Instance Methods
 
@@ -91,6 +87,12 @@ We use **instance variables** to store and track information (name, age, id numb
 ### The to string Instance Method
 
 ### More About Self
+
+## Part 4: Inheritance
+
+### Class Inheritance
+
+### Super
 
 ---
 
@@ -137,3 +139,9 @@ We use **instance variables** to store and track information (name, age, id numb
   - Even though it's not always necessary, why is prepending getter and setter methods with `self` important?
   - What are 2 clear things that we can `self` for?
   - What are the boundaries of `self` within a class when determining whether oyu're referencing the class or an instance of the class?
+- Part 4: Inheritance
+  - How does inheritance effect behavoir and what are the associated objects referred to?
+  - What do we use to signify that a class is inheriting form another?
+  - How can a subclass override the behavior of a superclass and how does this work?
+  - What does the `super` keyword dogit status
+  

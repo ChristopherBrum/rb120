@@ -42,6 +42,10 @@ class MyCar
     self.color = clr
     puts "Your new #{self.color} paint job looks choice!"
   end
+
+  def self.gas_mileage(gallons, miles)
+    puts "This car gets #{miles / gallons} miles to the gallon"
+  end
 end
 
 car = MyCar.new(2010, 'silver', 'pinto')
