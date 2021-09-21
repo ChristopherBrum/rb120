@@ -23,6 +23,9 @@
 - [Part 4: Inheritance](#part-4-inheritance)
   - [Class Inheritance](#class-inheritance)
   - [Super](#super)
+  - [Mixing in Modules](#mixing-in-modules)
+  - [Inheritance vs Modules](#inheritance-vs-modules)
+  - [Method Lookup Path](#method-lookup-path)
 
 - [Questions](#questions)
 
@@ -94,6 +97,12 @@ We use **instance variables** to store and track information (name, age, id numb
 
 ### Super
 
+### Mixing in Modules
+
+### Inheritance vs Modules
+
+### Method Lookup Path
+
 ---
 
 ## Questions
@@ -143,5 +152,12 @@ We use **instance variables** to store and track information (name, age, id numb
   - How does inheritance effect behavoir and what are the associated objects referred to?
   - What do we use to signify that a class is inheriting form another?
   - How can a subclass override the behavior of a superclass and how does this work?
-  - What does the `super` keyword dogit status
-  
+  - What does the `super` keyword do?
+  - How can we be more specific about what `super` passes or doesn't pass as an argument?
+  - What happens if you use `super` when the sublass method has arguments passed in and the superclass method doesn't, or vice-versa?
+  - What's a good example of where using class inheritance makes sense?
+  - Why do we need modules if we can inherit from other classes?
+  - What is a design principle that OOP helps us achieve?
+  - What is the difference between class inheritance and interface inheritance?
+  - What are the 3 main things to think about when determining whether class inheritance or a mixin is more appropriate for a situation?
+  - What are the 2 things modules are used for?
