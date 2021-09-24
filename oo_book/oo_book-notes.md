@@ -26,6 +26,7 @@
   - [Mixing in Modules](#mixing-in-modules)
   - [Inheritance vs Modules](#inheritance-vs-modules)
   - [Method Lookup Path](#method-lookup-path)
+  - [Private Protected and Public](#private-protected-and-public)
 
 - [Questions](#questions)
 
@@ -103,6 +104,8 @@ We use **instance variables** to store and track information (name, age, id numb
 
 ### Method Lookup Path
 
+### Private Protected and Public
+
 ---
 
 ## Questions
@@ -160,4 +163,15 @@ We use **instance variables** to store and track information (name, age, id numb
   - What is a design principle that OOP helps us achieve?
   - What is the difference between class inheritance and interface inheritance?
   - What are the 3 main things to think about when determining whether class inheritance or a mixin is more appropriate for a situation?
-  - What are the 2 things modules are used for?
+  - What are 3 ways that we use modules?
+  - What is important to keep in mind regarding the order in which mixins are added to a class?
+  - What is the advantage of namespacing?
+  - What do we use to reference a class or class method that is namespaced within a module?
+  - When using a module as a container how would call a method contained within it?
+  - When would we want to use a private method?
+  - How is the `self` keyword affected when using a private method?
+  - How is a private method scoped?
+  - How do protected methods differ from private methods?
+  - Is `initialize` a public, private or protected method?
+  - What are the 3 types of method access control?
+  - What are the 4 core programming concepts of OOP?

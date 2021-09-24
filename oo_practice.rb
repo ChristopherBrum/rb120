@@ -1,8 +1,17 @@
-# Create a class called MyCar. When you initialize a new instance or object of the class, allow the user to define some instance variables that tell us the year, color, and model of the car. Create an instance variable that is set to 0 during instantiation of the object to track the current speed of the car as well. Create instance methods that allow the car to speed up, brake, and shut the car off.
+# Write a method called age that calls a private method to calculate the age of the vehicle. 
+# Make sure the private method is not available from outside of the class. You'll need to use Ruby's built-in Time class to help
 
-class MyCar
+module OffRoadable
+  def off_road
+    puts "You've switched on the four wheel drive, time to go off roading!"
+  end
+end
+
+class Vehicle
   attr_reader :year
   attr_accessor :color, :model, :speed, :car_running
+  
+  @@subclasses = 0
   
   def initialize(year, color, model)
     @year = year
@@ -10,14 +19,15 @@ class MyCar
     @model = model
     @speed = 0
     @car_running = false
+    @@subclasses += 1
   end
   
-  def speed_up(accel=1)
-    self.speed = self.speed + (10 * accel)
+  def self.say_subclasses
+    puts "This Superclasses has #{@@subclasses} many subclasses under it"
   end
   
-  def brake(slow=1)
-    self.speed = self.speed - (10 * slow)
+  def self.gas_mileage(gallons, miles)
+    puts "This car gets #{miles / gallons} miles to the gallon"
   end
   
   def start_engine
@@ -28,6 +38,14 @@ class MyCar
   def stop_engine
     @car_running = false
     puts "click click (checks sunglasses in mirror)"
+  end
+  
+  def speed_up(accel=1)
+    self.speed = self.speed + (10 * accel)
+  end
+  
+  def brake(slow=1)
+    self.speed = self.speed - (10 * slow)
   end
   
   def engine_status
@@ -42,26 +60,30 @@ class MyCar
     self.color = clr
     puts "Your new #{self.color} paint job looks choice!"
   end
-
-  def self.gas_mileage(gallons, miles)
-    puts "This car gets #{miles / gallons} miles to the gallon"
+  
+  def age
+    puts "This #{model} is #{fetch_age(self.year)} years old."
+  end
+  
+  private 
+  
+  def fetch_age(vehicle_year)
+    Time.now.year - vehicle_year
   end
 end
 
-car = MyCar.new(2010, 'silver', 'pinto')
-car.status
-car.start_engine
-car.status
-car.speed_up(10)
-car.status
-car.brake(4)
-car.status
-car.brake(6)
-car.status  
-car.stop_engine
-car.status
-p car.color
-car.spray_paint('Blue')
-p car.model
-p car.year
-car.status
+class MyTruck < Vehicle
+  include OffRoadable
+  
+  SEATS = 2
+end
+
+class MyCar < Vehicle
+  SEATS = 4
+end
+
+car = MyCar.new(1999, 'blue', 'corolla')
+truck = MyTruck.new(2010, 'gray', 'tacoma')
+
+car.age
+truck.age
