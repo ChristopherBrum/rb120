@@ -175,3 +175,28 @@ We use **instance variables** to store and track information (name, age, id numb
   - Is `initialize` a public, private or protected method?
   - What are the 3 types of method access control?
   - What are the 4 core programming concepts of OOP?
+  - What does a constructor method return?
+  - How many classes can a class inherit from?
+  - How many modules can be mizxed into a class?
+
+---
+
+The major OOp concepts you should understand are:
+
+- relationship between a class and an object
+- idea that a class groups behaviors (ie, methods)
+
+Object level
+
+- objects do not share state between other objects, but do share behaviors
+- put another way, the values in the objects' instance variables (states) are different, but they can call the same instance methods (behaviors) defined in the class
+
+Class level
+
+- classes also have behaviors not for objects (class methods)
+
+Inheritance
+
+- sub-classing from parent class. Can only sub-class from 1 parent; used to model hierarchical relationships
+- mixing in modules. Can mix in as many modules as needed; Ruby's way of implementing multiple inheritance
+- understand how sub-classing or mixing in modules affects the method lookup path
