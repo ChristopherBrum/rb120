@@ -1,13 +1,20 @@
-# Create a module named Transportation that contains three classes: Vehicle, Truck, and Car. Truck and Car should both inherit from Vehicle.
+# Modify the following code to accept a string containing a first and last name. The name should be split into two instance variables in the setter method, then joined in the getter method to form a full name.
 
-module Transportation
-  class Vehicle
+class Person
+  attr_reader :first_name, :last_name
+
+  def name
+    "#{first_name} #{last_name}"
   end
 
-  class Truck < Vehicle
-  end
-
-  class Car < Vehicle
+  def name=(name)
+    @first_name = name.split.first
+    @last_name = name.split.last
   end
 end
 
+person1 = Person.new
+person1.name = 'John Doe'
+puts person1.name
+
+# John Doe
