@@ -1,3 +1,5 @@
+# OOP Questions
+
 - Part 1: The Object Model
   - Why was OOP created and what purpose does it serve?
   - What is encapsulation?
@@ -68,3 +70,4 @@
   - How many modules can be mizxed into a class?
 - OOP in Depth
   - What is the difference between polymorphism through inheritance and duck-typing?
+  - What is single inheritance?
