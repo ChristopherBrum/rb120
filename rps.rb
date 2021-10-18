@@ -4,31 +4,26 @@ class Player
   
   attr_accessor :move, :name
 
-  def initialize(player_type = :human)
-    @player_type = player_type
-    @move = nil
+  def initialize
     set_name
   end
+end
 
+class Human < Player
   def set_name
-    if human?
-      n = ''
-      loop do
-        puts "What's your name?"
-        n = gets.chomp.capitalize
-        break unless n.empty?
+    n = ''
+    loop do
+      puts "What's your name?"
+      n = gets.chomp.capitalize
+      break unless n.empty?
 
-        puts "Sorry, must enter a value"
-      end
-      self.name = n
-    else
-      self.name = COMPUTER_NAMES.sample
+      puts "Sorry, must enter a value"
     end
+    self.name = n
   end
 
   def choose
-    if human?
-      choice = nil
+    choice = nil
       loop do
         puts "Please choose rock, paper, or scissors:"
         choice = gets.chomp.downcase
@@ -36,13 +31,16 @@ class Player
         puts "Invalid choice"
       end
       self.move = choice
-    else
-      self.move = CHOICES.sample
-    end
+  end
+end
+
+class Computer < Player
+  def set_name
+    self.name = COMPUTER_NAMES.sample
   end
 
-  def human?
-    @player_type == :human
+  def choose
+    self.move = CHOICES.sample
   end
 end
 
@@ -58,8 +56,8 @@ class RPSGame
   attr_reader :human, :computer
 
   def initialize
-    @human = Player.new
-    @computer = Player.new(:computer)
+    @human = Humna.new
+    @computer = Computer.new
   end
 
   def display_welcome_message
