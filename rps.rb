@@ -53,7 +53,8 @@ class Spock < Move
 end
 
 class Player
-  COMPUTER_NAMES = ['C3PO', 'Wall-e', 'Robo-Bob', 'Johnny-5']
+  COMPUTER_NAMES = ['C3PO', 'Wall-e', 'Robo-Bob', 'Johnny-5', 'R2D2',\
+                    'Scissor-Bot', 'Hal']
 
   attr_accessor :name, :points, :move, :move_history
 
@@ -89,6 +90,7 @@ end
 class Human < Player
   def name_prompt
     n = ''
+
     loop do
       system('clear')
       puts "What's your name?"
@@ -96,11 +98,13 @@ class Human < Player
       break unless n.empty?
       puts "Sorry, must enter a value"
     end
+
     self.name = n
   end
 
   def choose
     choice = nil
+
     loop do
       puts "Please choose rock, paper, scissors, lizard or spock:"
       choice = gets.chomp.strip.downcase
@@ -113,17 +117,32 @@ class Human < Player
 end
 
 class Computer < Player
+  HAL_CHOICES = ['rock', 'scissors', 'scissors', 'scissors', 'scissors',\
+                 'scissors', 'scissors', 'lizard', 'lizard', 'spock', 'spock']
+
   def name_prompt
     self.name = COMPUTER_NAMES.sample
   end
 
+  def choose_computer_bot
+    if name == 'Scissor-Bot'
+      find_move_type('scissors')
+    elsif name == 'R2D2'
+      find_move_type('rock')
+    elsif name == 'Hal'
+      find_move_type(HAL_CHOICES.sample)
+    else
+      find_move_type(Move::CHOICES.sample)
+    end
+  end
+
   def choose
-    self.move = find_move_type(Move::CHOICES.sample)
+    self.move = choose_computer_bot
   end
 end
 
 class RPSGame
-  POINTS_TO_WIN = 3
+  POINTS_TO_WIN = 10
 
   attr_reader :human, :computer, :score
 
@@ -141,19 +160,22 @@ class RPSGame
   end
 
   def pause
-    6.times do
+    8.times do
       print '. '
       sleep(0.65)
     end
   end
 
   def display_welcome_message
+    clear
     puts "Welcome to Rock, Paper, Scissors, Lizard, Spock, #{human.name}!"
     display_blank_line
   end
 
   def display_goodbye_message
-    puts "Thanks for playing #{human.name}, Goodbye!"
+    display_blank_line
+    puts "Thanks for playing! Goodbye #{human.name}!"
+    display_blank_line
   end
 
   def display_moves
@@ -208,6 +230,7 @@ class RPSGame
   def play_again?
     answer = nil
 
+    display_blank_line
     loop do
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp.strip.downcase
@@ -222,11 +245,32 @@ class RPSGame
     human.points >= POINTS_TO_WIN || computer.points >= POINTS_TO_WIN
   end
 
+  def display_growing_banner(count)
+    puts ""
+    count.times do
+      print '~'
+      sleep(0.05)
+    end
+    print '>'
+  end
+
+  def display_banner
+    count = 1
+    loop do
+      display_growing_banner(count)
+
+      break if count == 8
+      count += 1
+    end
+  end
+
   def display_grand_winner
+    display_banner
+
     if human.points >= POINTS_TO_WIN
-      puts "#{human.name} is the GRAND WINNER!!!"
+      print " #{human.name} is the GRAND WINNER!!! <~~~~~~~~"
     else
-      puts "#{computer.name} is the GRAND WINNER!!!"
+      print " #{computer.name} is the GRAND WINNER!!! <~~~~~~~~"
     end
     display_blank_line
   end
@@ -236,29 +280,20 @@ class RPSGame
     computer.reset_points
   end
 
-  def turn
-    loop do
-      human.choose
-      computer.choose
-      display_moves
-      display_winner
-      pause
-      clear
-      break if winner?
-    end
-  end
-
   def display_history
     display_blank_line
+
     human.move_history.each_with_index do |current_move, index|
-      puts "Move #{index + 1}; #{current_move}"
+      puts "Move #{index + 1}: #{current_move}"
     end
+
     display_blank_line
   end
 
   def move_history?
     clear
     answer = nil
+
     loop do
       puts "Would you like to see all the moves you made? (y/n)"
       answer = gets.chomp.strip.downcase
@@ -269,15 +304,29 @@ class RPSGame
     display_history if answer == 'y'
   end
 
+  def turn
+    loop do
+      human.choose
+      computer.choose
+      display_moves
+      display_winner
+      break if winner?
+      pause
+      clear
+    end
+  end
+
   def play
-    clear
     display_welcome_message
+
     loop do
       turn
       display_grand_winner
       break unless play_again?
       reset_game
+      clear
     end
+
     move_history?
     display_goodbye_message
   end
