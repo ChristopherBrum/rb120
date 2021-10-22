@@ -1,30 +1,32 @@
-=begin 
-Nouns and Verbs
-TTT is a 2 player board game played on a 3x3 grid. Players take turns marking a square. First player to mark 3 squares in a row wins. 
-
-Nouns: player, board, square, grid
-Verbs: play, mark
-
-Board
-Square 
-Player
-- mark
-- play 
-
-=end
 require 'pry'
 
 class Board
+  WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
+                  [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
+                  [[1, 5, 9], [3, 5, 7]]
+
+  attr_reader :squares
+
   def initialize
     @squares =  {}
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
-  def get_square_at(key)
-    @squares[key]
+  def draw
+    puts "     |     |"
+    puts "  #{squares[1]}  |  #{squares[2]}  |  #{squares[3]}"
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{squares[4]}  |  #{squares[5]}  |  #{squares[6]}"
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{squares[7]}  |  #{squares[8]}  |  #{squares[9]}"
+    puts "     |     |"
   end
 
-  def set_square_at(key, marker)
+  def []=(key, marker)
     @squares[key].marker = marker
   end
 
@@ -34,6 +36,29 @@ class Board
 
   def full?
     unmarked_keys.empty?
+  end
+
+  def someone_won?
+    !!winning_marker
+  end
+
+  def has_winning_squares?(line, player_marker)
+    @squares.values_at(*line).all? { |line| line.marker == player_marker }
+  end
+
+  def winning_marker
+    WINNING_LINES.each do |line|
+      if has_winning_squares?(line, TTTGame::HUMAN_MARKER)
+        return TTTGame::HUMAN_MARKER
+      elsif has_winning_squares?(line, TTTGame::COMPUTER_MARKER)
+        return TTTGame::COMPUTER_MARKER
+      end
+    end
+    nil
+  end
+
+  def reset
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 end
 
@@ -90,7 +115,9 @@ class TTTGame
   end
 
   def display_goodbye_message
+    display_blank_line
     puts "Thanks for playing Tic-Tac_Toe! Goodbye!"
+    display_blank_line
   end
 
   def human_moves
@@ -103,49 +130,85 @@ class TTTGame
       puts "Sorry, that's not a valid choice."
     end
 
-    board.set_square_at(square, human.marker)
+    board[square] = human.marker
   end
 
   def computer_moves
-    board.set_square_at((board.unmarked_keys.sample), computer.marker)
+    board[board.unmarked_keys.sample] = computer.marker
+  end
+
+  def clear_screen_and_display_board
+    clear
+    display_board
   end
 
   def display_board
-    clear
     puts "You're a #{human.marker}. Computer is a #{computer.marker}"
     display_blank_line
-    puts "     |     |"
-    puts "  #{board.get_square_at(1)}  |  #{board.get_square_at(2)}  |  #{board.get_square_at(3)}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(4)}  |  #{board.get_square_at(5)}  |  #{board.get_square_at(6)}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(7)}  |  #{board.get_square_at(8)}  |  #{board.get_square_at(9)}"
-    puts "     |     |"
+    board.draw
     display_blank_line
   end
 
   def display_results
+    clear
     display_board
-    puts "The board is full!"
+    case board.winning_marker
+    when human.marker
+      puts "You won!"
+    when computer.marker
+      puts "Computer Won!"
+    else
+      puts "It's a tie!"
+    end
+    display_blank_line
+  end
+
+  def play_again?
+    answer = nil
+
+    loop do
+      puts "Would you like to play again? (y/n)"
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      puts "Sorry, must be y or n"
+    end
+
+    return false if answer == 'n'
+    return true if answer == 'y'
+  end
+
+  def reset
+    board.reset
+    clear
+  end
+
+  def display_play_again_message
+    puts "Let's play again!"
+    display_blank_line
   end
 
   def play
     clear
     display_welcome_message
-    display_board
-    loop do
-      human_moves
-      break if board.full?
 
-      computer_moves
+    loop do
       display_board
-      break if board.full?
+
+      loop do
+        human_moves
+        break if board.full? || board.someone_won?
+
+        computer_moves
+        break if board.full? || board.someone_won?
+        
+        clear_screen_and_display_board
+      end
+
+      display_results
+      break unless play_again?
+      reset
+      display_play_again_message
     end
-    display_results
     display_goodbye_message
   end
 end
