@@ -318,7 +318,6 @@ class RPSGame
 
   def play
     display_welcome_message
-
     loop do
       turn
       display_grand_winner
@@ -326,7 +325,6 @@ class RPSGame
       reset_game
       clear
     end
-
     move_history?
     display_goodbye_message
   end
