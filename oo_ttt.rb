@@ -42,23 +42,30 @@ class Board
     !!winning_marker
   end
 
-  def has_winning_squares?(line, player_marker)
-    @squares.values_at(*line).all? { |line| line.marker == player_marker }
-  end
-
-  def winning_marker
-    WINNING_LINES.each do |line|
-      if has_winning_squares?(line, TTTGame::HUMAN_MARKER)
-        return TTTGame::HUMAN_MARKER
-      elsif has_winning_squares?(line, TTTGame::COMPUTER_MARKER)
-        return TTTGame::COMPUTER_MARKER
-      end
-    end
-    nil
+  def marked?(base_marker)
+    base_marker != Square::INITIAL_MARKER
   end
 
   def reset
     (1..9).each { |key| @squares[key] = Square.new }
+  end
+  
+  def winning_marker
+    WINNING_LINES.each do |line|
+      base_marker = squares[line.first].marker
+
+      if three_matching_markers(line, base_marker)
+        return base_marker if marked?(base_marker)
+      end
+    end
+
+    nil
+  end
+
+  private
+
+  def three_matching_markers(line, base_marker)
+    line.all? { |key| squares[key].marker == base_marker }
   end
 end
 
@@ -92,14 +99,39 @@ end
 class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
+  HUMAN_GOES_FIRST = true
 
-  attr_reader :board, :human, :computer
+  attr_reader :board, :human, :computer, :human_turn
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
+    @human_turn = HUMAN_GOES_FIRST
   end
+
+  def play
+    clear
+    display_welcome_message
+
+    loop do
+      display_board
+
+      loop do
+        current_player_moves
+        break if board.full? || board.someone_won?
+        clear_screen_and_display_board if human_turn?
+      end
+
+      display_results
+      break unless play_again?
+      reset
+      display_play_again_message
+    end
+    display_goodbye_message
+  end
+
+  private
 
   def clear
     system('clear')
@@ -135,6 +167,24 @@ class TTTGame
 
   def computer_moves
     board[board.unmarked_keys.sample] = computer.marker
+  end
+
+  def swap_player_turn
+    @human_turn = !human_turn
+  end
+
+  def human_turn?
+    human_turn
+  end
+
+  def current_player_moves
+    if human_turn?
+      human_moves
+      swap_player_turn
+    else
+      computer_moves
+      swap_player_turn
+    end
   end
 
   def clear_screen_and_display_board
@@ -179,37 +229,13 @@ class TTTGame
 
   def reset
     board.reset
+    @human_turn = HUMAN_GOES_FIRST
     clear
   end
 
   def display_play_again_message
     puts "Let's play again!"
     display_blank_line
-  end
-
-  def play
-    clear
-    display_welcome_message
-
-    loop do
-      display_board
-
-      loop do
-        human_moves
-        break if board.full? || board.someone_won?
-
-        computer_moves
-        break if board.full? || board.someone_won?
-        
-        clear_screen_and_display_board
-      end
-
-      display_results
-      break unless play_again?
-      reset
-      display_play_again_message
-    end
-    display_goodbye_message
   end
 end
 
