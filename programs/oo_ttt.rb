@@ -110,7 +110,7 @@ class TTTGame
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
     @human_turn = HUMAN_GOES_FIRST
-    @wins = {:player => 0, :computer => 0}
+    @wins = { player: 0, computer: 0 }
   end
 
   def play
@@ -144,6 +144,48 @@ class TTTGame
     display_blank_line
   end
 
+  def display_board
+    puts "You're a '#{human.marker}' and have #{wins[:player]} wins."
+    puts "Computer is an '#{computer.marker}' and has #{wins[:computer]} wins."
+    display_blank_line
+    puts "First player to win #{WINS_NEEDED} games is the Grand Winner!"
+    display_blank_line
+    board.draw
+    display_blank_line
+  end
+
+  def display_results
+    clear
+    display_board
+    case board.winning_marker
+    when human.marker
+      puts "You won!"
+    when computer.marker
+      puts "Computer Won!"
+    else
+      puts "It's a tie!"
+    end
+  end
+
+  def display_grand_winner
+    display_blank_line
+    if wins[:player] >= WINS_NEEDED
+      puts "You're the Grand Winner! Congratulations!!"
+    else
+      puts "The Computer is the Grand Winner!"
+    end
+  end
+
+  def display_play_again_message
+    puts "Let's play again!"
+    display_blank_line
+  end
+
+  def clear_screen_and_display_board
+    clear
+    display_board
+  end
+
   def format_unmarked_squares(keys)
     if keys.size == 1
       keys.join
@@ -153,9 +195,19 @@ class TTTGame
     end
   end
 
+  def prompt_next_round
+    loop do
+      display_blank_line
+      puts "Press enter to start the next round."
+      answer = STDIN.gets
+      break unless answer.nil?
+    end
+  end
+
   def main_game
     loop do
       game_loop
+      display_grand_winner
       break unless play_again?
       reset_score
       reset
@@ -199,30 +251,6 @@ class TTTGame
     board[board.unmarked_keys.sample] = computer.marker
   end
 
-  def swap_player_turn
-    @human_turn = !human_turn
-  end
-
-  def human_turn?
-    human_turn
-  end
-
-  def someone_won?
-    if board.someone_won?
-      update_wins
-      return true
-    end
-  end
-
-  def update_wins
-    case board.winning_marker
-    when 'X'
-      wins[:player] += 1
-    when 'O'
-      wins[:computer] += 1
-    end
-  end
-
   def current_player_moves
     if human_turn?
       human_moves
@@ -232,42 +260,17 @@ class TTTGame
     swap_player_turn
   end
 
-  def clear_screen_and_display_board
-    clear
-    display_board
+  def swap_player_turn
+    @human_turn = !human_turn
   end
 
-  def display_board
-    puts "You're a '#{human.marker}' and have #{wins[:player]} wins."
-    puts "Computer is an '#{computer.marker}' and has #{wins[:computer]} wins."
-    display_blank_line
-    puts "First player to win #{WINS_NEEDED} games is the Grand Winner!"
-    display_blank_line
-    board.draw
-    display_blank_line
+  def human_turn?
+    human_turn
   end
 
-  def display_results
-    clear
-    display_board
-    case board.winning_marker
-    when human.marker
-      puts "You won!"
-    when computer.marker
-      puts "Computer Won!"
-    else
-      puts "It's a tie!"
-    end
-  end
-
-  def prompt_next_round
-    loop do
-      display_blank_line
-      puts "Press enter to start the next round."
-      answer = STDIN.gets
-      break unless answer.nil?
-      
-    end
+  def someone_won?
+    update_wins if board.someone_won?
+    true if board.someone_won?
   end
 
   def play_again?
@@ -289,19 +292,23 @@ class TTTGame
     wins.any? { |_, num_of_wins| num_of_wins >= WINS_NEEDED }
   end
 
+  def update_wins
+    case board.winning_marker
+    when 'X'
+      wins[:player] += 1
+    when 'O'
+      wins[:computer] += 1
+    end
+  end
+
   def reset_score
-    self.wins = {:player => 0, :computer => 0}
+    self.wins = { player: 0, computer: 0 }
   end
 
   def reset
     board.reset
     @human_turn = HUMAN_GOES_FIRST
     clear
-  end
-
-  def display_play_again_message
-    puts "Let's play again!"
-    display_blank_line
   end
 end
 
