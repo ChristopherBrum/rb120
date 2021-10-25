@@ -102,14 +102,15 @@ end
 class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
-  HUMAN_GOES_FIRST = true
   WINS_NEEDED = 5
+  CENTER_SQUARE = 5
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
-    @human_turn = HUMAN_GOES_FIRST
+    @human_turn = true
+    @human_goes_first = true
     @wins = { player: 0, computer: 0 }
   end
 
@@ -122,8 +123,8 @@ class TTTGame
 
   private
 
-  attr_reader :board, :human, :computer, :human_turn, :wins
-  attr_writer :wins
+  attr_reader :board, :human, :computer, :human_turn, :wins, :human_goes_first
+  attr_writer :wins, :human_turn, :human_goes_first
 
   def clear
     system('clear')
@@ -189,6 +190,8 @@ class TTTGame
   def format_unmarked_squares(keys)
     if keys.size == 1
       keys.join
+    elsif keys.size == 2
+      keys.join(' ')
     else
       last = keys.pop
       "#{keys.join(', ')}, or #{last}"
@@ -206,6 +209,7 @@ class TTTGame
 
   def main_game
     loop do
+      prompt_starting_player
       game_loop
       display_grand_winner
       break unless play_again?
@@ -213,6 +217,21 @@ class TTTGame
       reset
       display_play_again_message
     end
+  end
+
+  def prompt_starting_player
+    answer = nil
+
+    loop do
+      puts "Who would you like to go first? (human, computer, or random): "
+      answer = gets.chomp.downcase
+      break if answer.start_with?('h', 'c', 'r')
+      puts "Not a valid input. Enter 'human', 'computer', or 'random'."
+      display_blank_line
+    end
+
+    starting_player(answer)
+    clear
   end
 
   def game_loop
@@ -240,6 +259,7 @@ class TTTGame
     else
       computer_moves
     end
+
     swap_player_turn
   end
 
@@ -257,10 +277,12 @@ class TTTGame
   end
 
   def computer_moves
-    if computer_checks_offense
-      board[computer_checks_offense] = computer.marker
-    elsif computer_checks_defense
-      board[computer_checks_defense] = computer.marker
+    if computer_checks_offense_move
+      computer_makes_offensive_move
+    elsif computer_checks_defense_move
+      computer_makes_defensive_move
+    elsif space_five_free?
+      board[CENTER_SQUARE] = computer.marker
     else
       board[board.unmarked_keys.sample] = computer.marker
     end
@@ -270,26 +292,39 @@ class TTTGame
     board.squares.select { |_, square| square.marker == player_marker }.keys
   end
 
-  def computer_checks_offense
+  def computer_checks_offense_move
     potential_winning_square(player_squares(computer.marker))
   end
 
-  def computer_checks_defense
+  def computer_checks_defense_move
     potential_winning_square(player_squares(human.marker))
   end
 
-  def potential_winning_square(player_squares)
-    winning_square = nil
+  def computer_makes_offensive_move
+    board[computer_checks_offense_move] = computer.marker
+  end
 
-    Board::WINNING_LINES.each do |line|  
+  def computer_makes_defensive_move
+    board[computer_checks_defense_move] = computer.marker
+  end
+
+  def potential_winning_square(player_squares)
+    winning_squares = []
+
+    Board::WINNING_LINES.each do |line|
       if line.select { |key| player_squares.include?(key) }.size == 2
-        winning_square = line - player_squares
+        winning_squares << (line - player_squares).first
       end
     end
 
-    unless winning_square.nil? || !board.unmarked_keys.include?(winning_square.first)
-      winning_square.first
-    end
+    winners = winning_squares.select { |key| board.unmarked_keys.include?(key) }
+
+    return nil if winners.empty?
+    winners.first
+  end
+
+  def space_five_free?
+    board.unmarked_keys.include?(CENTER_SQUARE)
   end
 
   def swap_player_turn
@@ -339,8 +374,32 @@ class TTTGame
 
   def reset
     board.reset
-    @human_turn = HUMAN_GOES_FIRST
+    reset_starting_player
     clear
+  end
+
+  def reset_starting_player
+    self.human_turn = if human_goes_first
+                        true
+                      else
+                        false
+                      end
+  end
+
+  def starting_player(player)
+    if player.start_with?('h')
+      assign_starting_player(true)
+    elsif player.start_with?('c')
+      assign_starting_player(false)
+    else
+      random_answer = [true, false].sample
+      assign_starting_player(random_answer)
+    end
+  end
+
+  def assign_starting_player(bool)
+    self.human_turn = bool
+    self.human_goes_first = bool
   end
 end
 
