@@ -230,8 +230,17 @@ class TTTGame
     loop do
       current_player_moves
       break if board.full? || someone_won?
-      clear_screen_and_display_board if human_turn?
+      clear_screen_and_display_board
     end
+  end
+
+  def current_player_moves
+    if human_turn?
+      human_moves
+    else
+      computer_moves
+    end
+    swap_player_turn
   end
 
   def human_moves
@@ -248,16 +257,39 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    if computer_checks_offense
+      board[computer_checks_offense] = computer.marker
+    elsif computer_checks_defense
+      board[computer_checks_defense] = computer.marker
+    else
+      board[board.unmarked_keys.sample] = computer.marker
+    end
   end
 
-  def current_player_moves
-    if human_turn?
-      human_moves
-    else
-      computer_moves
+  def player_squares(player_marker)
+    board.squares.select { |_, square| square.marker == player_marker }.keys
+  end
+
+  def computer_checks_offense
+    potential_winning_square(player_squares(computer.marker))
+  end
+
+  def computer_checks_defense
+    potential_winning_square(player_squares(human.marker))
+  end
+
+  def potential_winning_square(player_squares)
+    winning_square = nil
+
+    Board::WINNING_LINES.each do |line|  
+      if line.select { |key| player_squares.include?(key) }.size == 2
+        winning_square = line - player_squares
+      end
     end
-    swap_player_turn
+
+    unless winning_square.nil? || !board.unmarked_keys.include?(winning_square.first)
+      winning_square.first
+    end
   end
 
   def swap_player_turn
