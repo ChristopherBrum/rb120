@@ -1,3 +1,5 @@
+require 'pry'
+
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
@@ -101,14 +103,14 @@ class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
   HUMAN_GOES_FIRST = true
-
-  attr_reader :board, :human, :computer, :human_turn
+  WINS_NEEDED = 5
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
     @human_turn = HUMAN_GOES_FIRST
+    @wins = {:player => 0, :computer => 0}
   end
 
   def play
@@ -119,6 +121,9 @@ class TTTGame
   end
 
   private
+
+  attr_reader :board, :human, :computer, :human_turn, :wins
+  attr_writer :wins
 
   def clear
     system('clear')
@@ -139,27 +144,46 @@ class TTTGame
     display_blank_line
   end
 
+  def format_unmarked_squares(keys)
+    if keys.size == 1
+      keys.join
+    else
+      last = keys.pop
+      "#{keys.join(', ')}, or #{last}"
+    end
+  end
+
   def main_game
+    loop do
+      game_loop
+      break unless play_again?
+      reset_score
+      reset
+      display_play_again_message
+    end
+  end
+
+  def game_loop
     loop do
       display_board
       player_move
       display_results
-      break unless play_again?
+      break if grand_winner?
+      prompt_next_round
       reset
-      display_play_again_message
     end
   end
 
   def player_move
     loop do
       current_player_moves
-      break if board.full? || board.someone_won?
+      break if board.full? || someone_won?
       clear_screen_and_display_board if human_turn?
     end
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "Choose a square (#{format_unmarked_squares(board.unmarked_keys)}): "
     square = nil
 
     loop do
@@ -183,6 +207,22 @@ class TTTGame
     human_turn
   end
 
+  def someone_won?
+    if board.someone_won?
+      update_wins
+      return true
+    end
+  end
+
+  def update_wins
+    case board.winning_marker
+    when 'X'
+      wins[:player] += 1
+    when 'O'
+      wins[:computer] += 1
+    end
+  end
+
   def current_player_moves
     if human_turn?
       human_moves
@@ -198,7 +238,10 @@ class TTTGame
   end
 
   def display_board
-    puts "You're a #{human.marker}. Computer is a #{computer.marker}"
+    puts "You're a '#{human.marker}' and have #{wins[:player]} wins."
+    puts "Computer is an '#{computer.marker}' and has #{wins[:computer]} wins."
+    display_blank_line
+    puts "First player to win #{WINS_NEEDED} games is the Grand Winner!"
     display_blank_line
     board.draw
     display_blank_line
@@ -217,6 +260,16 @@ class TTTGame
     end
   end
 
+  def prompt_next_round
+    loop do
+      display_blank_line
+      puts "Press enter to start the next round."
+      answer = STDIN.gets
+      break unless answer.nil?
+      
+    end
+  end
+
   def play_again?
     answer = nil
 
@@ -230,6 +283,14 @@ class TTTGame
 
     return false if answer == 'n'
     return true if answer == 'y'
+  end
+
+  def grand_winner?
+    wins.any? { |_, num_of_wins| num_of_wins >= WINS_NEEDED }
+  end
+
+  def reset_score
+    self.wins = {:player => 0, :computer => 0}
   end
 
   def reset
