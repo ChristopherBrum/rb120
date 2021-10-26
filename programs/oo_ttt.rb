@@ -1,5 +1,3 @@
-require 'pry'
-
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
@@ -92,13 +90,14 @@ class Square
 end
 
 class Player
-  COMPUTER_NAMES = ['Hal', 'Wall-E', 'Johnny-5', 'R2D2', 'Roomba', 'Safeway Self-Checkout Machine']
+  COMPUTER_NAMES = ['Hal', 'Wall-E', 'Johnny-5', 'R2D2'] +
+                   ['Roomba', 'Safeway Self-Checkout Machine']
 
   attr_accessor :marker, :name
 
   def initialize
-    @marker
-    @name
+    @marker = marker
+    @name = name
   end
 end
 
@@ -153,19 +152,26 @@ class TTTGame
 
   def display_players_names
     clear
-    puts "Today's game of Tic-Tac-Toe features #{human.name} Vs. #{computer.name}!!"
+    puts "Today's game of Tic-Tac-Toe features "\
+    "#{human.name} Vs. #{computer.name}!!"
     sleep(3)
     display_blank_line
   end
 
   def display_board
-    puts "#{human.name} is the '#{human.marker}' and has #{wins[:player]} wins."
-    puts "#{computer.name} is the '#{computer.marker}' and has #{wins[:computer]} wins."
+    display_player_stats
     display_blank_line
     puts "First player to win #{WINS_NEEDED} games is the Grand Winner!"
     display_blank_line
     board.draw
     display_blank_line
+  end
+
+  def display_player_stats
+    puts "#{human.name} is the '#{human.marker}' "\
+    "and has #{wins[:player]} wins."
+    puts "#{computer.name} is the '#{computer.marker}' "\
+    "and has #{wins[:computer]} wins."
   end
 
   def display_results
@@ -278,7 +284,7 @@ class TTTGame
     loop do
       display_starting_player_options
       answer = gets.chomp
-      break if %W(1 2 3).include?(answer) # answer.start_with?('h', 'c', 'r')
+      break if %w(1 2 3).include?(answer)
       puts "Sorry, that's not a valid choice."
     end
 
@@ -411,8 +417,7 @@ class TTTGame
       puts "Sorry, must be y or n"
     end
 
-    return false if answer == 'n'
-    return true if answer == 'y'
+    answer == 'y'
   end
 
   def grand_winner?
