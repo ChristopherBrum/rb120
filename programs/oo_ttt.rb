@@ -285,6 +285,7 @@ class TTTGame
       display_starting_player_options
       answer = gets.chomp
       break if %w(1 2 3).include?(answer)
+      display_blank_line
       puts "Sorry, that's not a valid choice."
     end
 
@@ -296,7 +297,6 @@ class TTTGame
     puts "  Enter 1 for #{human.name}."
     puts "  Enter 2 for #{computer.name}."
     puts "  Enter 3 to choose randomly."
-    display_blank_line
   end
 
   def game_loop
