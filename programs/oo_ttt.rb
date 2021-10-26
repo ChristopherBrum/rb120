@@ -348,6 +348,7 @@ class TTTGame
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp.downcase
       break if %w(y n).include?(answer)
+      clear
       puts "Sorry, must be y or n"
     end
 
