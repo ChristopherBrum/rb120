@@ -92,23 +92,26 @@ class Square
 end
 
 class Player
-  attr_reader :marker
+  COMPUTER_NAMES = ['Hal', 'Wall-E', 'Johnny-5', 'R2D2', 'Roomba', 'Safeway Self-Checkout Machine']
 
-  def initialize(marker)
-    @marker = marker
+  attr_accessor :marker, :name
+
+  def initialize
+    @marker
+    @name
   end
 end
 
 class TTTGame
-  HUMAN_MARKER = "X"
-  COMPUTER_MARKER = "O"
+  X_MARKER = "X"
+  O_MARKER = "O"
   WINS_NEEDED = 5
   CENTER_SQUARE = 5
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Player.new
+    @computer = Player.new
     @human_turn = true
     @human_goes_first = true
     @wins = { player: 0, computer: 0 }
@@ -117,6 +120,9 @@ class TTTGame
   def play
     clear
     display_welcome_message
+    choose_marker
+    choose_names
+    display_players_names
     main_game
     display_goodbye_message
   end
@@ -141,13 +147,20 @@ class TTTGame
 
   def display_goodbye_message
     display_blank_line
-    puts "Thanks for playing Tic-Tac_Toe! Goodbye!"
+    puts "Thanks for playing Tic-Tac_Toe #{human.name}! Goodbye!"
+    display_blank_line
+  end
+
+  def display_players_names
+    clear
+    puts "Today's game of Tic-Tac-Toe features #{human.name} Vs. #{computer.name}!!"
+    sleep(3)
     display_blank_line
   end
 
   def display_board
-    puts "You're a '#{human.marker}' and have #{wins[:player]} wins."
-    puts "Computer is an '#{computer.marker}' and has #{wins[:computer]} wins."
+    puts "#{human.name} is the '#{human.marker}' and has #{wins[:player]} wins."
+    puts "#{computer.name} is the '#{computer.marker}' and has #{wins[:computer]} wins."
     display_blank_line
     puts "First player to win #{WINS_NEEDED} games is the Grand Winner!"
     display_blank_line
@@ -160,9 +173,9 @@ class TTTGame
     display_board
     case board.winning_marker
     when human.marker
-      puts "You won!"
+      puts "#{human.name} won!"
     when computer.marker
-      puts "Computer Won!"
+      puts "#{computer.name} Won!"
     else
       puts "It's a tie!"
     end
@@ -171,9 +184,9 @@ class TTTGame
   def display_grand_winner
     display_blank_line
     if wins[:player] >= WINS_NEEDED
-      puts "You're the Grand Winner! Congratulations!!"
+      puts "#{human.name} is the Grand Winner! Congratulations!!"
     else
-      puts "The Computer is the Grand Winner!"
+      puts "#{computer.name} is the Grand Winner!"
     end
   end
 
@@ -207,6 +220,45 @@ class TTTGame
     end
   end
 
+  def choose_marker
+    answer = nil
+
+    loop do
+      puts "Choose your marker (X or O): "
+      answer = gets.chomp.strip.downcase
+      break if %w(x o).include?(answer[0])
+      puts "Sorry, that's not a valid choice. Please enter X or O"
+      display_blank_line
+    end
+
+    assign_markers(answer[0])
+  end
+
+  def assign_markers(human_marker)
+    if human_marker == 'x'
+      human.marker = X_MARKER
+      computer.marker = O_MARKER
+    else
+      human.marker = O_MARKER
+      computer.marker = X_MARKER
+    end
+  end
+
+  def choose_names
+    name = nil
+
+    loop do
+      display_blank_line
+      puts "Please enter your name: "
+      name = gets.chomp.strip.capitalize
+      break if !name.empty?
+      puts "Sorry, that's not a valid choice. Please enter your name"
+    end
+
+    human.name = name
+    computer.name = Player::COMPUTER_NAMES.sample
+  end
+
   def main_game
     loop do
       prompt_starting_player
@@ -222,16 +274,23 @@ class TTTGame
   def prompt_starting_player
     answer = nil
 
+    puts "Who would you like to go first?"
     loop do
-      puts "Who would you like to go first? (human, computer, or random): "
-      answer = gets.chomp.downcase
-      break if answer.start_with?('h', 'c', 'r')
-      puts "Not a valid input. Enter 'human', 'computer', or 'random'."
-      display_blank_line
+      display_starting_player_options
+      answer = gets.chomp
+      break if %W(1 2 3).include?(answer) # answer.start_with?('h', 'c', 'r')
+      puts "Sorry, that's not a valid choice."
     end
 
     starting_player(answer)
     clear
+  end
+
+  def display_starting_player_options
+    puts "  Enter 1 for #{human.name}."
+    puts "  Enter 2 for #{computer.name}."
+    puts "  Enter 3 to choose randomly."
+    display_blank_line
   end
 
   def game_loop
@@ -288,10 +347,6 @@ class TTTGame
     end
   end
 
-  def player_squares(player_marker)
-    board.squares.select { |_, square| square.marker == player_marker }.keys
-  end
-
   def computer_checks_offense_move
     potential_winning_square(player_squares(computer.marker))
   end
@@ -306,6 +361,10 @@ class TTTGame
 
   def computer_makes_defensive_move
     board[computer_checks_defense_move] = computer.marker
+  end
+
+  def player_squares(player_marker)
+    board.squares.select { |_, square| square.marker == player_marker }.keys
   end
 
   def potential_winning_square(player_squares)
@@ -362,9 +421,9 @@ class TTTGame
 
   def update_wins
     case board.winning_marker
-    when 'X'
+    when human.marker
       wins[:player] += 1
-    when 'O'
+    when computer.marker
       wins[:computer] += 1
     end
   end
@@ -388,9 +447,9 @@ class TTTGame
   end
 
   def starting_player(player)
-    if player.start_with?('h')
+    if player.start_with?('1')
       assign_starting_player(true)
-    elsif player.start_with?('c')
+    elsif player.start_with?('2')
       assign_starting_player(false)
     else
       random_answer = [true, false].sample
