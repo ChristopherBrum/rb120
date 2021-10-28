@@ -36,15 +36,104 @@
 
 require 'pry'
 
-class Player
-  attr_accessor :name
+module Displayable
 
-  def initialize
-    @name = name
-    @hand = hand
+  def clear
+    system 'clear'
   end
 
-  def hand
+  def display_blank_line
+    puts ''
+  end
+
+  def headline_prompt(message)
+    puts "-----> #{message} <-----"
+  end
+
+  def headline_prompt_with_space(message)
+    display_blank_line
+    headline_prompt(message)
+    display_blank_line
+  end
+
+  def prompt(message)
+    puts "--> #{message}"
+  end
+
+  def prompt_with_space(message)
+    display_blank_line
+    prompt(message)
+    display_blank_line
+  end
+
+  def display_rules
+    clear
+    prompt_with_space("Rules:
+      Try to get as close to 21 as possible, without going over. 
+      If you go over 21, it's a 'bust' and you lose.
+
+    Card values:
+      Number cards (1-10) have their face value
+      Jacks, Kings and Queens are worth 10.
+      Ace can be either 1 or 11.
+
+    Player Turn:
+      The dealer and the player are initially dealt 2 two cards.
+      The players cards are revealed.
+      The dealer only reveals one card.
+      The player can either;
+        'hit' (take another card)
+          or
+        'stay' (keep the cards they have)
+
+    Dealer Turn:
+      The dealer reveals their second card.
+      The dealer must 'hit' until they have at least 17. 
+
+    Winning:
+      The dealer wins if:
+        Their total is greater than the players
+          or
+        They have 21
+          or
+        The player busts
+      The player wins if:
+        Their total is hreater than the dealers
+          or
+        The dealer busts")
+    
+    loop do              
+      prompt("Press enter when you're done with the rules")
+      answer = STDIN.gets
+      break unless answer.nil?
+    end
+  end
+
+  def display_hand
+    headline_prompt_with_space("#{name}'s Hand")
+
+    hand.each do |card|
+      prompt("#{card.face} of #{card.suit}")
+    end
+
+    prompt('Unkown card') if hand.size < 2
+    prompt_with_space("#{name}'s' total is #{total}")
+  end
+
+end
+
+class Player
+  include Displayable
+
+  attr_accessor :name, :hand
+
+  def initialize(name=nil)
+    @name = name
+    @hand = []
+  end
+
+  def add_to_hand(card)
+    hand << card
   end
 
   def hit
@@ -57,14 +146,21 @@ class Player
   end
 
   def total
+    total = 0
+    hand.each { |card| total += card.find_card_value }
+    total
   end
 end
 
 class Dealer < Player
-  def hand
+  DEALER_NAMES = ['Rufus', 'Midge', 'Barney', 'Petunia', 'Ducky']
+
+  def initialize
+    super(chose_dealer_name)
   end
 
-  def deal
+  def chose_dealer_name
+    DEALER_NAMES.sample
   end
 end
 
@@ -80,8 +176,11 @@ class Deck
     end
   end
 
-  def deal #?
+  def take_card
+    card = cards.sample
+    cards.delete(card)
   end
+
 end
 
 class Card
@@ -114,32 +213,48 @@ class Card
   end
 
   def jack?
-
+    face == 'Jack'
   end
 
   def queen?
-
+    face == 'Queen'
   end
 
   def king?
-
+    face == 'King'
   end
 
   def ace?
+    face == 'Ace'
+  end
 
+  def find_card_value
+    if jack? || queen? || king?
+      10
+    elsif ace?
+      11
+    else
+      face.to_i
+    end
   end
 end
 
 class TwentyOne
+  include Displayable
+
+  attr_accessor :deck
+  attr_reader :player, :dealer
+
   def initialize
-    @deck = deck
+    @deck = Deck.new
     @player = Player.new
     @dealer = Dealer.new
   end
 
   def start
+    welcome
     deal_cards
-    # show_initial_cards
+    show_initial_cards
     # player_turn
     # dealer_turn
     # show_result
@@ -147,13 +262,50 @@ class TwentyOne
 
   private
 
-  attr_accessor :deck
-
-  def deal_cards
-    deck = Deck.new
-    binding.pry
+  def welcome
+    clear
+    headline_prompt("Welcome to Twenty-One")
+    name_prompt
+    rules_prompt
   end
 
+  def name_prompt
+    answer = nil
+
+    loop do
+      prompt_with_space("Please enter your name:")
+      answer = gets.chop.strip.capitalize
+      break if !answer.empty?
+      prompt_with_space("Sorry, invalid input.")
+    end
+
+    player.name = answer
+  end
+
+  def rules_prompt
+    clear
+    answer = nil
+
+    loop do
+      prompt_with_space("Would you like to view the rules for Twenty-One? (y or n):")
+      answer = gets.chomp.strip.downcase
+      break if %w(y n).include?(answer)
+      prompt_with_space("Sorry, invalid input.")
+    end
+
+    display_rules if answer == 'y'
+  end
+
+  def deal_cards
+    clear
+    2.times { |_| player.add_to_hand(deck.take_card) }
+    dealer.add_to_hand(deck.take_card)
+  end
+
+  def show_initial_cards
+    player.display_hand
+    dealer.display_hand
+  end
 end
 
 TwentyOne.new.start
