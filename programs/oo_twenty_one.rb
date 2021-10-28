@@ -1,43 +1,6 @@
-=begin
-  Twenty-One is a card game consisting of a dealer and a player where they try to get as close to 21 without going over. 
-
-  Game Overview:
-  - both participants are dealt 2 cards fro a 52 card deck
-  - player takes first turn, can sya 'hit' or 'stay'
-  - if player busts they lose, if not then the dealer goes
-  - dealer 'hits' until they reach at least 17
-  - if dealer busts player wins, otherwise the person with the highest total wins
-  - if theres a tie there is no winner
-
-  Nouns: dealer, player, participant, deck, card, game, total
-  Verbs: deal, hit, stay, busts
-
-  Player
-    - hit
-    - stay
-    - bust?
-    - total
-  Dealer
-    - hit
-    - stay
-    - bust?
-    - total
-    - deal (should this be here, or in Deck?)
-  Participant
-
-  Deck
-    - deal (should this be here, or in Dealer?)
-  Card
-
-  Game
-    - start
-
-=end
-
 require 'pry'
 
 module Displayable
-
   def clear
     system 'clear'
   end
@@ -46,13 +9,12 @@ module Displayable
     puts ''
   end
 
-  def headline_prompt(message)
-    puts "-----> #{message} <-----"
+  def display_line
+    puts '--------------------------'
   end
 
-  def headline_prompt_with_space(message)
-    display_blank_line
-    headline_prompt(message)
+  def headline_prompt(message)
+    puts "-----> #{message} <-----"
     display_blank_line
   end
 
@@ -61,21 +23,33 @@ module Displayable
   end
 
   def prompt_with_space(message)
-    display_blank_line
     prompt(message)
     display_blank_line
   end
 
+  def display_question_get_answer(question, accepted_input)
+    answer = nil
+
+    loop do
+      prompt_with_space(question)
+      answer = gets.chomp.strip.downcase
+      break if accepted_input.include?(answer)
+      prompt_with_space("Sorry, invalid input.")
+    end
+
+    answer
+  end
+
   def display_rules
     clear
-    prompt_with_space("Rules:
-      Try to get as close to 21 as possible, without going over. 
+    prompt_with_space("Goal:
+      Try to get as close to 21 as possible, without going over.
       If you go over 21, it's a 'bust' and you lose.
 
     Card values:
-      Number cards (1-10) have their face value
+      Number cards (2-10) have their face value
       Jacks, Kings and Queens are worth 10.
-      Ace can be either 1 or 11.
+      Ace can be worth 1 or 11.
 
     Player Turn:
       The dealer and the player are initially dealt 2 two cards.
@@ -88,7 +62,7 @@ module Displayable
 
     Dealer Turn:
       The dealer reveals their second card.
-      The dealer must 'hit' until they have at least 17. 
+      The dealer must 'hit' until they have at least 17.
 
     Winning:
       The dealer wins if:
@@ -98,28 +72,55 @@ module Displayable
           or
         The player busts
       The player wins if:
-        Their total is hreater than the dealers
+        Their total is greater than the dealers
           or
         The dealer busts")
-    
-    loop do              
+
+    loop do
       prompt("Press enter when you're done with the rules")
       answer = STDIN.gets
       break unless answer.nil?
     end
   end
 
+  def display_table
+    clear
+    display_cards
+    display_scores
+  end
+
+  def display_cards
+    player.display_hand
+    dealer.display_hand
+  end
+
   def display_hand
-    headline_prompt_with_space("#{name}'s Hand")
+    headline_prompt("#{name}'s Hand")
 
     hand.each do |card|
       prompt("#{card.face} of #{card.suit}")
     end
 
     prompt('Unkown card') if hand.size < 2
-    prompt_with_space("#{name}'s' total is #{total}")
+    display_blank_line
   end
 
+  def display_scores
+    display_line
+    player.display_score
+    dealer.display_score
+    display_line
+    display_blank_line
+  end
+
+  def display_score
+    prompt("#{name}'s' total is #{total}")
+  end
+
+  def display_continue_prompt
+    prompt_with_space("Press enter when you're ready to continue:")
+    answer = STDIN.gets
+  end
 end
 
 class Player
@@ -132,17 +133,17 @@ class Player
     @hand = []
   end
 
-  def add_to_hand(card)
+  def hit(card)
     hand << card
   end
 
-  def hit
-  end
-
-  def stay
+  def stay(dealer)
+    prompt_with_space("#{name} stays. Now it's #{dealer.name}'s turn!")
+    display_continue_prompt
   end
 
   def bust?
+    total > 21
   end
 
   def total
@@ -180,7 +181,6 @@ class Deck
     card = cards.sample
     cards.delete(card)
   end
-
 end
 
 class Card
@@ -253,11 +253,15 @@ class TwentyOne
 
   def start
     welcome
-    deal_cards
-    show_initial_cards
-    # player_turn
-    # dealer_turn
-    # show_result
+
+    loop do
+      deal_cards
+      display_table
+      player_turn
+      # dealer_turn
+      # show_result
+      break 
+    end
   end
 
   private
@@ -284,27 +288,36 @@ class TwentyOne
 
   def rules_prompt
     clear
-    answer = nil
-
-    loop do
-      prompt_with_space("Would you like to view the rules for Twenty-One? (y or n):")
-      answer = gets.chomp.strip.downcase
-      break if %w(y n).include?(answer)
-      prompt_with_space("Sorry, invalid input.")
-    end
-
+    question = "Would you like to view the rules for Twenty-One? (y or n):"
+    answer = display_question_get_answer(question, %w(y n))
     display_rules if answer == 'y'
   end
 
   def deal_cards
     clear
-    2.times { |_| player.add_to_hand(deck.take_card) }
-    dealer.add_to_hand(deck.take_card)
+    2.times { |_| player.hit(deck.take_card) }
+    dealer.hit(deck.take_card)
   end
 
-  def show_initial_cards
-    player.display_hand
-    dealer.display_hand
+  def player_turn
+    loop do
+      question = "Hit or stay, #{player.name}?"
+      answer = display_question_get_answer(question, %w(h s))
+      player.hit(deck.take_card)
+      display_table
+      break if answer == 's' || player.bust?
+    end
+    player_turn_end(answer)
+  end
+
+  def player_turn_end(answer)
+    clear
+    display_scores
+    if answer == 's'
+      player.stay(dealer)
+    elsif player.bust?
+
+    end
   end
 end
 
