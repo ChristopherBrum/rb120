@@ -5,8 +5,8 @@ module Displayable
     system 'clear'
   end
 
-  def display_blank_line
-    puts ''
+  def display_blank_line(lines=1)
+    lines.times { |_| puts '' }
   end
 
   def display_line
@@ -19,12 +19,19 @@ module Displayable
   end
 
   def prompt(message)
-    puts "--> #{message}"
+    puts "-- #{message}"
   end
 
   def prompt_with_space(message)
     prompt(message)
     display_blank_line
+  end
+
+  def display_pause_with_dots
+    3.times do
+      print '. '
+      sleep(1)
+    end
   end
 
   def display_question_get_answer(question, accepted_input)
@@ -98,11 +105,9 @@ module Displayable
   def display_hand
     headline_prompt("#{name}'s Hand")
 
-    hand.each do |card|
-      prompt("#{card.face} of #{card.suit}")
-    end
+    hand.each { |card| prompt("#{card.face} of #{card.suit}") }
 
-    prompt('Unkown card') if hand.size < 2
+    prompt('Unkown Card') if hand.size < 2
     display_blank_line
   end
 
@@ -115,7 +120,7 @@ module Displayable
   end
 
   def display_score
-    prompt("#{name}'s' total is #{total}")
+    prompt("#{name}'s total is #{total}")
   end
 
   def display_continue_prompt
@@ -150,6 +155,9 @@ class Player
   def total
     total = 0
     hand.each { |card| total += card.find_card_value }
+    hand.each do |card|
+      total -= 10 if card.face == 'Ace' && total > 21
+    end
     total
   end
 
@@ -167,6 +175,18 @@ class Dealer < Player
 
   def chose_dealer_name
     DEALER_NAMES.sample
+  end
+
+  def hit(card)
+    if hand.size >= 2
+      prompt_with_space("#{name} hits!")
+      display_pause_with_dots
+    end
+    hand << card
+  end
+
+  def should_hit?(player_total)
+    (total < 16) || (total > 16 && total < player_total)
   end
 end
 
@@ -260,15 +280,7 @@ class TwentyOne
     welcome
 
     loop do
-      loop do
-        deal_cards
-        display_table
-        player_turn
-        break if player.bust?
-        dealer_turn
-        break if dealer.bust?
-        break
-      end
+      play_round
       display_results
       break unless play_again?
       # next_round maybe?
@@ -283,7 +295,7 @@ class TwentyOne
     clear
     headline_prompt("Welcome to Twenty-One")
     name_prompt
-    # rules_prompt
+    rules_prompt
   end
 
   def name_prompt
@@ -302,8 +314,20 @@ class TwentyOne
   def rules_prompt
     clear
     question = "Would you like to view the rules for Twenty-One? (y or n):"
-    answer = display_question_get_answer(question, %w(y n))
-    display_rules if answer == 'y'
+    answer = display_question_get_answer(question, %w(y yes n no))
+    display_rules if answer.start_with?('y')
+  end
+
+  def play_round
+    loop do
+      deal_cards
+      display_table
+      player_turn
+      break if player.bust?
+      dealer_turn
+      break if dealer.bust?
+      break
+    end
   end
 
   def deal_cards
@@ -315,8 +339,8 @@ class TwentyOne
   def player_turn
     loop do
       question = "Hit or stay, #{player.name}?"
-      answer = display_question_get_answer(question, %w(h s))
-      break if answer == 's'
+      answer = display_question_get_answer(question, %w(h hit s stay))
+      break if answer.start_with?('s')
       player.hit(deck.take_card)
       display_table
       break if player.bust?
@@ -324,13 +348,20 @@ class TwentyOne
   end
 
   def dealer_turn
-    loop do 
-      dealer.hit(deck.take_card) if dealer.total < 16
+    dealer_flips_card
+    display_table
+    loop do
+      dealer.hit(deck.take_card) if dealer.should_hit?(player.total)
       display_table
-      prompt_with_space("#{dealer.name} hits!")
-      sleep(3)
       break if dealer.bust? || dealer.total > 16
     end
+  end
+
+  def dealer_flips_card
+    display_table
+    prompt_with_space("#{dealer.name} flips their other card over.")
+    display_pause_with_dots
+    dealer.hit(deck.take_card)
   end
 
   def display_results
@@ -349,12 +380,12 @@ class TwentyOne
 
   def play_again?
     question = "Would you like to play again?"
-    answer = display_question_get_answer(question, %w(y n))
-    answer == 'y'
+    answer = display_question_get_answer(question, %w(y yes n no))
+    answer.start_with?('y')
   end
 
   def reset
-    deck = Deck.new
+    self.deck = Deck.new
     player.hand = []
     dealer.hand = []
   end
