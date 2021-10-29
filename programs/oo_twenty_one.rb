@@ -71,6 +71,7 @@ module Displayable
         They have 21
           or
         The player busts
+
       The player wins if:
         Their total is greater than the dealers
           or
@@ -119,7 +120,7 @@ module Displayable
 
   def display_continue_prompt
     prompt_with_space("Press enter when you're ready to continue:")
-    answer = STDIN.gets
+    STDIN.gets
   end
 end
 
@@ -150,6 +151,10 @@ class Player
     total = 0
     hand.each { |card| total += card.find_card_value }
     total
+  end
+
+  def <=>(other_total)
+    total <=> other_total
   end
 end
 
@@ -255,13 +260,21 @@ class TwentyOne
     welcome
 
     loop do
-      deal_cards
-      display_table
-      player_turn
-      # dealer_turn
-      # show_result
-      break 
+      loop do
+        deal_cards
+        display_table
+        player_turn
+        break if player.bust?
+        dealer_turn
+        break if dealer.bust?
+        break
+      end
+      display_results
+      break unless play_again?
+      # next_round maybe?
+      reset
     end
+    goodbye
   end
 
   private
@@ -270,7 +283,7 @@ class TwentyOne
     clear
     headline_prompt("Welcome to Twenty-One")
     name_prompt
-    rules_prompt
+    # rules_prompt
   end
 
   def name_prompt
@@ -303,21 +316,51 @@ class TwentyOne
     loop do
       question = "Hit or stay, #{player.name}?"
       answer = display_question_get_answer(question, %w(h s))
+      break if answer == 's'
       player.hit(deck.take_card)
       display_table
-      break if answer == 's' || player.bust?
+      break if player.bust?
     end
-    player_turn_end(answer)
   end
 
-  def player_turn_end(answer)
-    clear
-    display_scores
-    if answer == 's'
-      player.stay(dealer)
-    elsif player.bust?
-
+  def dealer_turn
+    loop do 
+      dealer.hit(deck.take_card) if dealer.total < 16
+      display_table
+      prompt_with_space("#{dealer.name} hits!")
+      sleep(3)
+      break if dealer.bust? || dealer.total > 16
     end
+  end
+
+  def display_results
+    if player.bust?
+      prompt_with_space("#{player.name} busts!")
+    elsif dealer.bust?
+      prompt_with_space("#{dealer.name} busts!")
+    elsif player.total == dealer.total
+      prompt_with_space("It's a draw!")
+    elsif player.total > dealer.total
+      prompt_with_space("#{player.name} wins!")
+    else
+      prompt_with_space("#{dealer.name} wins!")
+    end
+  end
+
+  def play_again?
+    question = "Would you like to play again?"
+    answer = display_question_get_answer(question, %w(y n))
+    answer == 'y'
+  end
+
+  def reset
+    deck = Deck.new
+    player.hand = []
+    dealer.hand = []
+  end
+
+  def goodbye
+    prompt_with_space("Thanks for playing Twenty-One, #{player.name}! Goodbye!")
   end
 end
 
