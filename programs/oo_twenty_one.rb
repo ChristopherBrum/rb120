@@ -1,6 +1,41 @@
 require 'pry'
 
 module Displayable
+  RULES = "Goal:
+     Try to get as close to 21 as possible, without going over.
+     If you go over 21, it's a 'bust' and you lose.
+
+   Card values:
+     Number cards (2-10) have their face value
+     Jacks, Kings and Queens are worth 10.
+     Ace can be worth 1 or 11.
+
+   Player Turn:
+     The dealer and the player are initially dealt 2 two cards.
+     The players cards are revealed.
+     The dealer only reveals one card.
+     The player can either;
+       'hit' (take another card)
+         or
+       'stay' (keep the cards they have)
+
+   Dealer Turn:
+     The dealer reveals their second card.
+     The dealer must 'hit' until they have at least 17.
+
+   Winning:
+     The dealer wins if:
+       Their total is greater than the players
+         or
+       They have 21
+         or
+       The player busts
+
+     The player wins if:
+       Their total is greater than the dealers
+         or
+       The dealer busts"
+
   def clear
     system 'clear'
   end
@@ -49,40 +84,7 @@ module Displayable
 
   def display_rules
     clear
-    prompt_with_space("Goal:
-      Try to get as close to 21 as possible, without going over.
-      If you go over 21, it's a 'bust' and you lose.
-
-    Card values:
-      Number cards (2-10) have their face value
-      Jacks, Kings and Queens are worth 10.
-      Ace can be worth 1 or 11.
-
-    Player Turn:
-      The dealer and the player are initially dealt 2 two cards.
-      The players cards are revealed.
-      The dealer only reveals one card.
-      The player can either;
-        'hit' (take another card)
-          or
-        'stay' (keep the cards they have)
-
-    Dealer Turn:
-      The dealer reveals their second card.
-      The dealer must 'hit' until they have at least 17.
-
-    Winning:
-      The dealer wins if:
-        Their total is greater than the players
-          or
-        They have 21
-          or
-        The player busts
-
-      The player wins if:
-        Their total is greater than the dealers
-          or
-        The dealer busts")
+    prompt_with_space(RULES)
 
     loop do
       prompt("Press enter when you're done with the rules")
@@ -93,13 +95,9 @@ module Displayable
 
   def display_table
     clear
-    display_cards
-    display_scores
-  end
-
-  def display_cards
     player.display_hand
     dealer.display_hand
+    display_scores
   end
 
   def display_hand
@@ -129,7 +127,7 @@ module Displayable
   end
 end
 
-class Player
+class Participant
   include Displayable
 
   attr_accessor :name, :hand
@@ -166,15 +164,26 @@ class Player
   end
 end
 
+class Player < Participant
+  def choose_name
+    answer = nil
+
+    loop do
+      prompt_with_space("Please enter your name:")
+      answer = gets.chop.strip.capitalize
+      break if !answer.empty?
+      prompt_with_space("Sorry, invalid input.")
+    end
+
+    self.name = answer
+  end
+end
+
 class Dealer < Player
   DEALER_NAMES = ['Rufus', 'Midge', 'Barney', 'Petunia', 'Ducky']
 
   def initialize
-    super(chose_dealer_name)
-  end
-
-  def chose_dealer_name
-    DEALER_NAMES.sample
+    super(DEALER_NAMES.sample)
   end
 
   def hit(card)
@@ -267,9 +276,6 @@ end
 class TwentyOne
   include Displayable
 
-  attr_accessor :deck
-  attr_reader :player, :dealer
-
   def initialize
     @deck = Deck.new
     @player = Player.new
@@ -281,9 +287,8 @@ class TwentyOne
 
     loop do
       play_round
-      display_results
+      determine_results
       break unless play_again?
-      # next_round maybe?
       reset
     end
     goodbye
@@ -291,24 +296,14 @@ class TwentyOne
 
   private
 
+  attr_accessor :deck
+  attr_reader :player, :dealer
+
   def welcome
     clear
-    headline_prompt("Welcome to Twenty-One")
-    name_prompt
+    headline_prompt("Welcome to the card game Twenty-One")
+    player.choose_name
     rules_prompt
-  end
-
-  def name_prompt
-    answer = nil
-
-    loop do
-      prompt_with_space("Please enter your name:")
-      answer = gets.chop.strip.capitalize
-      break if !answer.empty?
-      prompt_with_space("Sorry, invalid input.")
-    end
-
-    player.name = answer
   end
 
   def rules_prompt
@@ -364,14 +359,26 @@ class TwentyOne
     dealer.hit(deck.take_card)
   end
 
-  def display_results
-    if player.bust?
-      prompt_with_space("#{player.name} busts!")
-    elsif dealer.bust?
-      prompt_with_space("#{dealer.name} busts!")
+  def determine_results
+    if player.bust? || dealer.bust?
+      return_who_busted
     elsif player.total == dealer.total
       prompt_with_space("It's a draw!")
-    elsif player.total > dealer.total
+    else
+      return_who_won
+    end
+  end
+
+  def return_who_busted
+    if player.bust?
+      prompt_with_space("#{player.name} busts!")
+    else
+      prompt_with_space("#{dealer.name} busts!")
+    end
+  end
+
+  def return_who_won
+    if player.total > dealer.total
       prompt_with_space("#{player.name} wins!")
     else
       prompt_with_space("#{dealer.name} wins!")
