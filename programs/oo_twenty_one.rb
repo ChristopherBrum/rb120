@@ -1,5 +1,3 @@
-require 'pry'
-
 module Rules
   RULES = "Goal:
      Try to get as close to 21 as possible, without going over.
