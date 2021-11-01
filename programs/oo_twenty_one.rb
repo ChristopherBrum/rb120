@@ -1,6 +1,6 @@
 require 'pry'
 
-module Displayable
+module Rules
   RULES = "Goal:
      Try to get as close to 21 as possible, without going over.
      If you go over 21, it's a 'bust' and you lose.
@@ -35,6 +35,10 @@ module Displayable
        Their total is greater than the dealers
          or
        The dealer busts"
+end
+
+module Display
+  include Rules
 
   def clear
     system 'clear'
@@ -45,11 +49,11 @@ module Displayable
   end
 
   def display_line
-    puts '--------------------------'
+    puts '--------------------------------'
   end
 
   def headline_prompt(message)
-    puts "-----> #{message} <-----"
+    puts "--------> #{message} <--------"
     display_blank_line
   end
 
@@ -84,7 +88,7 @@ module Displayable
 
   def display_rules
     clear
-    prompt_with_space(RULES)
+    prompt_with_space(Rules::RULES)
 
     loop do
       prompt("Press enter when you're done with the rules")
@@ -95,9 +99,17 @@ module Displayable
 
   def display_table
     clear
+    display_wins
     player.display_hand
     dealer.display_hand
     display_scores
+  end
+
+  def display_wins
+    headline_prompt("First player to win #{TwentyOne::WINS_NEEDED} \
+rounds is the Grand Winner")
+    prompt("#{player.name}'s wins: #{player.wins}")
+    prompt_with_space("#{dealer.name}'s wins: #{dealer.wins}")
   end
 
   def display_hand
@@ -121,20 +133,29 @@ module Displayable
     prompt("#{name}'s total is #{total}")
   end
 
+  def display_grand_winner
+    if player.won?
+      headline_prompt("Congrats #{player.name}, you're the Grand Winner!")
+    elsif dealer.won?
+      headline_prompt("#{dealer.name} is the Grand Winner!")
+    end
+  end
+
   def display_continue_prompt
-    prompt_with_space("Press enter when you're ready to continue:")
+    prompt("Press enter when you're ready to continue:")
     STDIN.gets
   end
 end
 
 class Participant
-  include Displayable
+  include Display
 
-  attr_accessor :name, :hand
+  attr_accessor :name, :hand, :wins
 
   def initialize(name=nil)
     @name = name
     @hand = []
+    @wins = 0
   end
 
   def hit(card)
@@ -147,16 +168,20 @@ class Participant
   end
 
   def bust?
-    total > 21
+    total > TwentyOne::MAX_TOTAL
   end
 
   def total
     total = 0
     hand.each { |card| total += card.find_card_value }
     hand.each do |card|
-      total -= 10 if card.face == 'Ace' && total > 21
+      total -= 10 if card.face == 'Ace' && total > TwentyOne::MAX_TOTAL
     end
     total
+  end
+
+  def won?
+    wins == TwentyOne::WINS_NEEDED
   end
 
   def <=>(other_total)
@@ -195,7 +220,13 @@ class Dealer < Player
   end
 
   def should_hit?(player_total)
-    (total <= 16) || (total > 16 && total < player_total)
+    (total < TwentyOne::MIN_TOTAL_TO_STAY) ||
+      (total >= TwentyOne::MIN_TOTAL_TO_STAY && total < player_total)
+  end
+
+  def should_stay?(player_total)
+    ((total >= TwentyOne::MIN_TOTAL_TO_STAY) &&
+      (total >= player_total) && (!bust?))
   end
 end
 
@@ -273,8 +304,14 @@ class Card
   end
 end
 
-class CardGame
-  include Displayable
+class TwentyOne
+  WINS_NEEDED = 5
+  MAX_TOTAL = 21
+  MIN_TOTAL_TO_STAY = 17
+
+  include Display
+
+  attr_reader :game_selection
 
   def initialize
     @deck = Deck.new
@@ -284,12 +321,11 @@ class CardGame
 
   def start
     welcome
-
     loop do
-      play_round
-      determine_results
+      game_loop
+      display_grand_winner
       break unless play_again?
-      reset
+      full_reset
     end
     goodbye
   end
@@ -313,6 +349,15 @@ class CardGame
     display_rules if answer.start_with?('y')
   end
 
+  def game_loop
+    loop do
+      play_round
+      determine_results
+      break if grand_winner?
+      reset
+    end
+  end
+
   def play_round
     loop do
       deal_cards
@@ -331,6 +376,22 @@ class CardGame
     dealer.hit(deck.take_card)
   end
 
+  def player_total
+    player.total
+  end
+
+  def dealer_total
+    dealer.total
+  end
+
+  def player_total_over_dealer_total
+    player_total > dealer_total
+  end
+
+  def player_total_under_dealer_total
+    dealer_total > player_total
+  end
+
   def player_turn
     loop do
       question = "Hit or stay, #{player.name}?"
@@ -345,9 +406,9 @@ class CardGame
   def dealer_turn
     dealer_flips_card
     loop do
-      dealer.hit(deck.take_card) if dealer.should_hit?(player.total)
+      dealer.hit(deck.take_card) if dealer.should_hit?(player_total)
       display_table
-      break if dealer.bust? || !dealer.should_hit?(player.total)
+      break if dealer.bust? || dealer.should_stay?(player_total)
     end
   end
 
@@ -360,13 +421,15 @@ class CardGame
   end
 
   def determine_results
+    update_wins
     if player.bust? || dealer.bust?
       return_who_busted
-    elsif player.total == dealer.total
+    elsif player_total == dealer_total
       prompt_with_space("It's a draw!")
     else
       return_who_won
     end
+    display_continue_prompt
   end
 
   def return_who_busted
@@ -378,11 +441,39 @@ class CardGame
   end
 
   def return_who_won
-    if player.total > dealer.total
+    if player_total_over_dealer_total
       prompt_with_space("#{player.name} wins!")
-    elsif player.total < dealer.total
+    elsif player_total_under_dealer_total
       prompt_with_space("#{dealer.name} wins!")
     end
+  end
+
+  def increment_player_wins
+    player.wins += 1
+  end
+
+  def increment_dealer_wins
+    dealer.wins += 1
+  end
+
+  def dealer_wins?
+    (player_total_under_dealer_total && !dealer.bust?) || player.bust?
+  end
+
+  def player_wins?
+    (player_total_over_dealer_total && !player.bust?) || dealer.bust?
+  end
+
+  def update_wins
+    if dealer_wins?
+      increment_dealer_wins
+    elsif player_wins?
+      increment_player_wins
+    end
+  end
+
+  def grand_winner?
+    player.won? || dealer.won?
   end
 
   def play_again?
@@ -397,9 +488,15 @@ class CardGame
     dealer.hand = []
   end
 
+  def full_reset
+    reset
+    player.wins = 0
+    dealer.wins = 0
+  end
+
   def goodbye
     prompt_with_space("Thanks for playing Twenty-One, #{player.name}! Goodbye!")
   end
 end
 
-CardGame.new.start
+TwentyOne.new.start
