@@ -195,7 +195,7 @@ class Dealer < Player
   end
 
   def should_hit?(player_total)
-    (total < 16) || (total > 16 && total < player_total)
+    (total <= 16) || (total > 16 && total < player_total)
   end
 end
 
@@ -273,7 +273,7 @@ class Card
   end
 end
 
-class TwentyOne
+class CardGame
   include Displayable
 
   def initialize
@@ -344,11 +344,10 @@ class TwentyOne
 
   def dealer_turn
     dealer_flips_card
-    display_table
     loop do
       dealer.hit(deck.take_card) if dealer.should_hit?(player.total)
       display_table
-      break if dealer.bust? || dealer.total > 16
+      break if dealer.bust? || !dealer.should_hit?(player.total)
     end
   end
 
@@ -357,6 +356,7 @@ class TwentyOne
     prompt_with_space("#{dealer.name} flips their other card over.")
     display_pause_with_dots
     dealer.hit(deck.take_card)
+    display_table
   end
 
   def determine_results
@@ -372,7 +372,7 @@ class TwentyOne
   def return_who_busted
     if player.bust?
       prompt_with_space("#{player.name} busts!")
-    else
+    elsif dealer.bust?
       prompt_with_space("#{dealer.name} busts!")
     end
   end
@@ -380,7 +380,7 @@ class TwentyOne
   def return_who_won
     if player.total > dealer.total
       prompt_with_space("#{player.name} wins!")
-    else
+    elsif player.total < dealer.total
       prompt_with_space("#{dealer.name} wins!")
     end
   end
@@ -402,4 +402,4 @@ class TwentyOne
   end
 end
 
-TwentyOne.new.start
+CardGame.new.start
