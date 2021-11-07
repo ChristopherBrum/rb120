@@ -71,3 +71,19 @@
 - OOP in Depth
   - What is the difference between polymorphism through inheritance and duck-typing?
   - What is single inheritance?
+- Conceptual Questions
+  - Why is it generally safer to invoke a setter method (if available) vs. referencing the instance variable directly when trying to set an instance variable within the class? Give an example.
+  - Give an example of when it would make sense to manually write a custom getter method vs. using `attr_reader`.
+  - What is the difference between states and behaviors?
+  - What is the difference between instance methods and class methods?
+  - How do class inheritance and mixing in modules affect instance variable scope? Give an example.
+  - How does encapsulation relate to the public interface of a class?  
+    - Encapsulation in OOP is about separating our codebase into containers (classes) in order to reduce the dependencies that procedural programming were rife with. Furthermore in Ruby we have method access controls which give us the ability to restrict the access of class behaviors (methods) to the public interface. The public interface only needs access to certain behavior of a class and does not need to know how these behaviors or any private behaviors function. This adds a further layer of protection between data and the public interface as well as lessens dependencies.  
+  - What are collaborator objects, and what is the purpose of using them in OOP? Give an example of how we would work with one.
+  - How and why would we implement a fake operator in a custom class? Give an example.
+  - What are the use cases for `self` in Ruby, and how does `self` change based on the scope it is used in? Provide examples.
+  - When does accidental method overriding occur, and why? Give an example.
+  - How is Method Access Control implemented in Ruby? Provide examples of when we would use public, protected, and private access modifiers.
+  - Describe the distinction between modules and classes.
+  - What is polymorphism and how can we implement polymorphism in Ruby? Provide examples.
+  - What is encapsulation, and why is it important in Ruby? Give an example.
