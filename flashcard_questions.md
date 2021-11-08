@@ -2,6 +2,9 @@
 
 - Part 1: The Object Model
   - Why was OOP created and what purpose does it serve?
+    - OOP was written in order to deal with the growing complexity of prograns and the web of dependecy they inevitably created. These interdependencies make it difficult to update or maintain programs without causing bugs and errors throughout a program.
+    - OOP significcantly reduced the dependencies within a program by encapsulating data into clearly organized code using classes, objects, and modules. By encapsulating functionality programmers were able to expose only the data/functionaliuty that they needed to and essentially hide the rest within their respected containers. This added an additional layer of protection and security.
+    - Additionally OOP allowed programmers to think about their programs in a more metaphorical by separating 
   - What is encapsulation?
   - What is polymorphism?
   - What does inherotance mean when referring to OOP?
