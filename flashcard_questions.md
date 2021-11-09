@@ -2,12 +2,12 @@
 
 - Part 1: The Object Model
   - Why was OOP created and what purpose does it serve?
-    - OOP was written in order to deal with the growing complexity of prograns and the web of dependecy they inevitably created. These interdependencies make it difficult to update or maintain programs without causing bugs and errors throughout a program.
-    - OOP significcantly reduced the dependencies within a program by encapsulating data into clearly organized code using classes, objects, and modules. By encapsulating functionality programmers were able to expose only the data/functionaliuty that they needed to and essentially hide the rest within their respected containers. This added an additional layer of protection and security.
-    - Additionally OOP allowed programmers to think about their programs in a more metaphorical by separating 
+    - OOP was written in order to deal with the growing complexity of programs and the web of dependency they inevitably created. These interdependencies make it difficult to update or maintain programs without causing bugs and errors throughout a program.
+    - OOP significantly reduced the dependencies within a program by encapsulating data into clearly organized code using classes, objects, and modules. By encapsulating functionality programmers were able to expose only the data/functionality that they needed to and essentially hide the rest within their respected containers. This added an additional layer of protection and security.
+    - Additionally OOP allowed programmers to think about their programs in a more metaphorical by separating
   - What is encapsulation?
   - What is polymorphism?
-  - What does inherotance mean when referring to OOP?
+  - What does inheritance mean when referring to OOP?
   - What are modules?
   - What can be considered an Object in Ruby?
   - What defines an object in Ruby?
@@ -43,14 +43,14 @@
   - How can we use the `to_s` method within our own custom classes?
   - Even though it's not always necessary, why is prepending getter and setter methods with `self` important?
   - What are 2 clear things that we can `self` for?
-  - What are the boundaries of `self` within a class when determining whether oyu're referencing the class or an instance of the class?
+  - What are the boundaries of `self` within a class when determining whether you're referencing the class or an instance of the class?
 - Part 4: Inheritance
-  - How does inheritance effect behavoir and what are the associated objects referred to?
+  - How does inheritance effect behavior and what are the associated objects referred to?
   - What do we use to signify that a class is inheriting form another?
   - How can a subclass override the behavior of a superclass and how does this work?
   - What does the `super` keyword do?
   - How can we be more specific about what `super` passes or doesn't pass as an argument?
-  - What happens if you use `super` when the sublass method has arguments passed in and the superclass method doesn't, or vice-versa?
+  - What happens if you use `super` when the subclass method has arguments passed in and the superclass method doesn't, or vice-versa?
   - What's a good example of where using class inheritance makes sense?
   - Why do we need modules if we can inherit from other classes?
   - What is a design principle that OOP helps us achieve?
@@ -70,7 +70,7 @@
   - What are the 4 core programming concepts of OOP?
   - What does a constructor method return?
   - How many classes can a class inherit from?
-  - How many modules can be mizxed into a class?
+  - How many modules can be mixed into a class?
 - OOP in Depth
   - What is the difference between polymorphism through inheritance and duck-typing?
   - What is single inheritance?
