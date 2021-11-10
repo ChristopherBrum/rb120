@@ -2,7 +2,7 @@
 
 ## OOP and Objects
 
-- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve-?)
+- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve)
 - [What is an object?](#what-is-an-object)
 - [How do you instantiate a new object?](#how-do-you-instantiate-a-new-object)
 - [What is a class and what is it's relationship with an object?](#what-is-a-class-and-what-is-it's-relationship-with-an-object)
@@ -17,30 +17,30 @@
 
 ## Method Access Control
 
-- [What is a private method call used for?]()
-- [What is a protected method call used for?]()
-- [What is polymorphism?]()
-- [Explain two different ways to implement polymorphism.]()
-- [What is duck typing? How does it relate to polymorphism - what problem does it solve?]()
+- [What is a private method call used for?](#what-is-a-private-method-call-used-for)
+- [What is a protected method call used for?](#what-is-a-protected-method-call-used-for)
+- [What is polymorphism?](#what-is-polymorphism)
+- [Explain two different ways to implement polymorphism](#explain-two-different-ways-to-implement-polymorphism)
+- [What is duck typing and how does it relate to polymorphism?](#what-is-duck-typing-and-how-does-it-relate-to-polymorphism)
 
 ## Inheritance
 
-- [What is inheritance?]()
-- [When is it good to use inheritance?]()
+- [What is inheritance?](#what-is-inheritance)
+- [When is it good to use inheritance?](#when-is-it-good-to-use-inheritance)
 
 ## Modules
 
-- [What is a module?]()
-- [What is a mixin?]()
-- [What is namespacing?]()
+- [What is a module?](#what-is-a-module)
+- [What is a mixin?](#what-is-a-mixin)
+- [What is namespacing?](#what-is-namespacing)
 
 ## Method Lookup Path
 
-- [What is the method lookup path?]()
-- [How can we reference a constant initialized within a different class?]()
-- [How are constants used in inheritance?]()
+- [What is the method lookup path?](#what-is-the-method-lookup-path)
+- [How can we reference a constant initialized within a different class?](#how-can-we-reference-a-constant-initialized-within-a-different-class)
+- [How are constants used in inheritance?](#how-are-constants-used-in-inheritance)
 
-### Why was oop created and what purpose does it serve?
+### Why was oop created and what purpose does it serve
 
 OOP is a programming paradigm that was developed in order to deal with the growing complexity of programs and the interdependencies they inevitably created, which made updating and maintaining programs difficult, often resulting in a ripple effect of bugs and errors when making a small change within a program.
 
@@ -547,7 +547,7 @@ Band.new.play_song
 
 ---
 
-### What is duck typing? How does it relate to polymorphism - what problem does it solve?
+### What is duck typing and how does it relate to polymorphism
 
 Duck typing is a form of polymorphism where unrelated objects can respond to a common interface. The objects won't have any connection via inheritance or module mixins and can all respond to the same method call even though the implementation of the method call is different for each object type. Duck typing focusing on what an object can do and not an object is.
 
@@ -555,13 +555,13 @@ Duck typing is a form of polymorphism where unrelated objects can respond to a c
 
 ---
 
-### What is inheritance?
+### What is inheritance
 
 Inheritance is how a class gains state and/or behavior from a superclass or a module. Inheritance allows us to write superclasses that contain broad states and behaviors, as well as subclasses, which can contain more fine-tuned and specific states and behaviors. Inheritance between classes is done when there is a clear hierarchy between the classes. 
 
 ---
 
-### When is it good to use inheritance?
+### When is it good to use inheritance
 
 When there is an 'is-a' (e.g. human is-a primate, which is-a mammal) relationship between two classes it makes sense to implement _class inheritance_. Class inheritance generally models a hierarchal relationship.
 
@@ -613,7 +613,7 @@ Human.new.read        # I can read books!
 
 ---
 
-### What is a module?
+### What is a module
 
 Modules are containers that allow you to group methods, classes, and constants through interface inheritance. Methods that do not have a hierarchal relationship, as we'd see in class inheritance, can be grouped into a module and shared with any number of classes that we like. Modules are primarily used for grouping related methods together and for namespacing. Modules can not instantiate an object. 
 
@@ -621,7 +621,7 @@ See below for code sample.
 
 ---
 
-### What is a mixin?
+### What is a mixin
 
 A mixin is a module containing methods that we 'mixin' to a class by the use of the `#include` method. By mixing a module into a class, instances of that class, and any class inheriting from it, have access to the methods defined within the module. This is done when a 'has-a' relationship (e.g. human has-a ability to read) exists and there is no hierarchal relationship present. Grouping behaviors into a module in this fashion helps keep our code DRY.
 
@@ -643,7 +643,7 @@ Human.new.read        # I can read books!
 
 ---
 
-### What is namespacing?
+### What is namespacing
 
 Namespacing is a way of organizing classes together that may be related in some way and can aide in making our code easier to understand. This also allows us to create classes of the same name but nested within different modules which can keep code organized and easy to undersatnd in complex codebases. Any class defined within a module can only be referenced by prepending the module name to and the namespace resolution operator(`::`) before the class name. 
 
@@ -674,7 +674,7 @@ Target::Location27::Manager.new.manage      # I manage Target at location 27
 
 ---
 
-### What is the method lookup path?
+### What is the method lookup path
 
 The method lookup path is the order of the classes and modules that Ruby looks through when a method has been invoked for the methods definition. Ruby will start by looking in the class of the calling object, if not definition is found there it will search for any modules included within the class, and then works it's way up the inheritance chain until it finds the method definition its looking for. If no method definition is found it will throw a `NoMethodError`. 
 
@@ -730,6 +730,6 @@ In order to reference a constant within a different class, the class name it is 
 
 ---
 
-### How are constants used in inheritance?
+### How are constants used in inheritance
 
 Because constants have lexical scope Ruby looks first in the class or module that they were referenced, then through the hierarchy chain. This why we should utilize the syntax where the calling object is then referenced with the namespace resolution operator and the constant name. Constants initialized in a superclass will be inherited by the subclass. 
