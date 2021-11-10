@@ -19,6 +19,17 @@
   - [What is polymorphism?]()
   - [Explain two different ways to implement polymorphism.]()
   - [What is duck typing? How does it relate to polymorphism - what problem does it solve?]()
+- Inheritance
+  - [What is inheritance?]()
+  - [When is it good to use inheritance?]()
+- Modules
+  - [What is a module?]()
+  - [What is a mixin?]()
+  - [What is namespacing?]()
+- Method Lookup Path
+  - [What is the method lookup path?]()
+  - [How can we reference a constant initialized within a different class?]()
+  - [How are constants used in inheritance?]()
 
 ## Why was OOP created and what purpose does it serve
 
@@ -529,4 +540,187 @@ Band.new.play_song
 
 ## What is duck typing? How does it relate to polymorphism - what problem does it solve?
 
+Duck typing is a form of polymorphism where unrelated objects can respond to a common interface. The objects won't have any connection via inheritance or module mixins and can all respond to the same method call even though the implementation of the method call is different for each object type. Duck typing focusing on what an object can do and not an object is.
 
+\_see above for code sample_
+
+---
+
+## What is inheritance?
+
+Inheritance is how a class gains state and/or behavior from a superclass or a module. Inheritance allows us to write superclasses that contain broad states and behaviors, as well as subclasses, which can contain more fine-tuned and specific states and behaviors. Inheritance between classes is done when there is a clear hierarchy between the classes. 
+
+---
+
+## When is it good to use inheritance?
+
+When there is an 'is-a' (e.g. human is-a primate, which is-a mammal) relationship between two classes it makes sense to implement _class inheritance_. Class inheritance generally models a hierarchal relationship.
+
+```ruby
+class Mammal
+  def state_fact
+    puts "I'm warm-blooded."
+  end
+end
+
+class Primate < Mammal; end
+
+class Human < Primate; end
+
+mammal = Mammal.new.state_fact      # I'm warm-blooded.
+primate = Primate.new.state_fact    # I'm warm-blooded.
+human = Human.new.state_fact        # I'm warm-blooded.
+```
+
+Above we have instantiated an instance of the `Mammal` class, the `Primate` class, and the `Human` class and invoked the `Mammal#state_fact` instance method defined within the `Mammal` class and inherited by the `Primate` and `Human` classes.
+
+In situations when there is a 'has-a' (e.g. human has-a ability to read) relationship we want to use _interface inheritance_. When there is no hierarchal relationship at work this is the best way to share behaviors with a class. This can help keep your code DRY by allowing us to add specific behaviors to a class or classes when there is no relationship between them, by mixing in a module to a class. 
+
+```ruby
+module Readable
+  def read
+    puts "I can read books!"
+  end
+  # any class with Readable mixed in has access to the methods here
+end
+
+class Mammal
+  def state_fact
+    puts "I'm warm-blooded."
+  end
+end
+
+class Primate < Mammal; end
+
+class Human < Primate
+  include Readable
+  # Readable module is mixed in with the include method
+end
+
+Mammal.new.read       # NoMethodError
+Primate.new.read      # NoMethodError
+Human.new.read        # I can read books!
+```
+
+---
+
+## What is a module?
+
+Modules are containers that allow you to group methods, classes, and constants through interface inheritance. Methods that do not have a hierarchal relationship, as we'd see in class inheritance, can be grouped into a module and shared with any number of classes that we like. Modules are primarily used for grouping related methods together and for namespacing. Modules can not instantiate an object. 
+
+See below for code sample.
+
+---
+
+## What is a mixin?
+
+A mixin is a module containing methods that we 'mixin' to a class by the use of the `#include` method. By mixing a module into a class, instances of that class, and any class inheriting from it, have access to the methods defined within the module. This is done when a 'has-a' relationship (e.g. human has-a ability to read) exists and there is no hierarchal relationship present. Grouping behaviors into a module in this fashion helps keep our code DRY.
+
+```ruby
+module Readable
+  def read
+    puts "I can read books!"
+  end
+  # any class with Readable mixed in has access to the methods here
+end
+
+class Human < Primate
+  include Readable
+  # Readable module is mixed in with the include method
+end
+
+Human.new.read        # I can read books!
+```
+
+---
+
+## What is namespacing?
+
+Namespacing is a way of organizing classes together that may be related in some way and can aide in making our code easier to understand. This also allows us to create classes of the same name but nested within different modules which can keep code organized and easy to undersatnd in complex codebases. Any class defined within a module can only be referenced by prepending the module name to and the namespace resolution operator(`::`) before the class name. 
+
+```ruby
+module Walmart
+  module Location503
+    class Manager
+      def manage
+        puts "I manage Walmart at location 503"
+      end
+    end
+  end
+end
+
+module Target
+  module Location27
+    class Manager
+      def manage
+        puts "I manage Target at location 27"
+      end
+    end
+  end
+end
+
+Walmart::Location503::Manager.new.manage   # I manage Walmart at location 503
+Target::Location27::Manager.new.manage      # I manage Target at location 27
+```
+
+---
+
+## What is the method lookup path?
+
+The method lookup path is the order of the classes and modules that Ruby looks through when a method has been invoked for the methods definition. Ruby will start by looking in the class of the calling object, if not definition is found there it will search for any modules included within the class, and then works it's way up the inheritance chain until it finds the method definition its looking for. If no method definition is found it will throw a `NoMethodError`. 
+
+```ruby
+module Readable
+  def read
+    puts "I can read!"
+  end
+end
+
+module Climbable
+  def climb
+    puts "I can climb!"
+  end
+end
+
+class Mammal
+  def moves
+    puts "I move on 4 legs"
+  end
+end
+
+class Primate < Mammal
+  include Climbable
+  
+  def moves
+    puts "I move on 2 legs"
+  end
+end
+
+class Human < Primate
+  include Readable
+  include Climbable
+  
+  def moves
+    puts "I move in my prius"
+  end
+end
+
+
+p Mammal.ancestors  # [Mammal, Object, PP::ObjectMixin, Kernel, BasicObject]
+p Primate.ancestors # [Primate, Climbable, Mammal, Object, PP::ObjectMixin, Kernel, BasicObject]
+p Human.ancestors   # [Human, Readable, Primate, Climbable, Mammal, Object, PP::ObjectMixin, Kernel, BasicObject]
+```
+
+Above the `::ancestors` class method has been called on our three classes `Mammal`, `Primate` and `Human`, and return an array of the method lookup path of each class. It starts in the class of the calling object, checks any modules included mixed in, then checks the next class in the hierarchy chain, and on and on until the method is found. A `NoMethodError` is thrown if the method definiton is not found. 
+
+---
+
+## How can we reference a constant initialized within a different class?
+
+In order to reference a constant within a different class, the class name it is initialized within must be referenced, then the namespace resolution operator (`::`), and then constant name, like this: `ClassName::CONSTANT`.
+
+---
+
+## How are constants used in inheritance?
+
+Because constants have lexical scope Ruby looks first in the class or module that they were referenced, then through the hierarchy chain. This why we should utilize the syntax where the calling object is then referenced with the namespace resolution operator and the constant name. Constants initialized in a superclass will be inherited by the subclass. 
