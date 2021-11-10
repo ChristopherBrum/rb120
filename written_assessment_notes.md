@@ -2,7 +2,7 @@
 
 ## OOP and Objects
 
-- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve?)
+- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve-?)
 - [What is an object?](#what-is-an-object)
 - [How do you instantiate a new object?](#how-do-you-instantiate-a-new-object)
 - [What is a class and what is it's relationship with an object?](#what-is-a-class-and-what-is-it's-relationship-with-an-object)
