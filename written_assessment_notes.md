@@ -720,7 +720,7 @@ p Primate.ancestors # [Primate, Climbable, Mammal, Object, PP::ObjectMixin, Kern
 p Human.ancestors   # [Human, Readable, Primate, Climbable, Mammal, Object, PP::ObjectMixin, Kernel, BasicObject]
 ```
 
-Above the `::ancestors` class method has been called on our three classes `Mammal`, `Primate` and `Human`, and return an array of the method lookup path of each class. It starts in the class of the calling object, checks any modules included mixed in, then checks the next class in the hierarchy chain, and on and on until the method is found. A `NoMethodError` is thrown if the method definiton is not found. 
+Above the `::ancestors` class method has been called on our three classes `Mammal`, `Primate` and `Human`, and return an array of the method lookup path of each class. It starts in the class of the calling object, checks any modules included mixed in, then checks the next class in the hierarchy chain, and on and on until the method is found. A `NoMethodError` is thrown if the method definiton is not found.
 
 ---
 
@@ -732,4 +732,4 @@ In order to reference a constant within a different class, the class name it is 
 
 ### How are constants used in inheritance
 
-Because constants have lexical scope Ruby looks first in the class or module that they were referenced, then through the hierarchy chain. This why we should utilize the syntax where the calling object is then referenced with the namespace resolution operator and the constant name. Constants initialized in a superclass will be inherited by the subclass. 
+Because constants have lexical scope Ruby looks first in the class or module that they were referenced, then through the hierarchy chain. This why we should utilize the syntax where the calling object is then referenced with the namespace resolution operator and the constant name. Constants initialized in a superclass will be inherited by the subclass.
