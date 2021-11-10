@@ -2,7 +2,7 @@
 
 ## OOP and Objects
 
-- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve)
+- [Why was OOP created and what purpose does it serve?](#why-was-oop-created-and-what-purpose-does-it-serve?)
 - [What is an object?](#what-is-an-object)
 - [How do you instantiate a new object?](#how-do-you-instantiate-a-new-object)
 - [What is a class and what is it's relationship with an object?](#what-is-a-class-and-what-is-it's-relationship-with-an-object)
@@ -13,7 +13,7 @@
 - [What is a class method and how do you define one?](#what-is-a-class-method-and-how-do-you-define-one)
 - [What is a collaborator object and their purpose?](#what-is-a-collaborator-object-and-their-purpose)
 - [What is encapsulation and how does it relate to the public interface of a class?](#what-is-encapsulation-and-how-does-it-relate-to-the-public-interface-of-a-class)
-- [How do objects encapsulate state?](#how-do-objects-encapsulate-state-?)
+- [How do objects encapsulate state?](#how-do-objects-encapsulate-state)
 
 ## Method Access Control
 
@@ -40,7 +40,7 @@
 - [How can we reference a constant initialized within a different class?]()
 - [How are constants used in inheritance?]()
 
-### Why was oop created and what purpose does it serve
+### Why was oop created and what purpose does it serve?
 
 OOP is a programming paradigm that was developed in order to deal with the growing complexity of programs and the interdependencies they inevitably created, which made updating and maintaining programs difficult, often resulting in a ripple effect of bugs and errors when making a small change within a program.
 
