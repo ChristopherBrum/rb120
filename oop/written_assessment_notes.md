@@ -557,7 +557,7 @@ Duck typing is a form of polymorphism where unrelated objects can respond to a c
 
 ### What is inheritance
 
-Inheritance is how a class gains state and/or behavior from a superclass or a module. Inheritance allows us to write superclasses that contain broad states and behaviors, as well as subclasses, which can contain more fine-tuned and specific states and behaviors. Inheritance between classes is done when there is a clear hierarchy between the classes. 
+Inheritance is how a class gains state and/or behavior from a superclass or a module. Inheritance allows us to write superclasses that contain broad states and behaviors, as well as subclasses, which can contain more fine-tuned and specific states and behaviors. Inheritance between classes is done when there is a clear hierarchy between the classes.
 
 ---
 
@@ -615,7 +615,7 @@ Human.new.read        # I can read books!
 
 ### What is a module
 
-Modules are containers that allow you to group methods, classes, and constants through interface inheritance. Methods that do not have a hierarchal relationship, as we'd see in class inheritance, can be grouped into a module and shared with any number of classes that we like. Modules are primarily used for grouping related methods together and for namespacing. Modules can not instantiate an object. 
+Modules are containers that allow you to group methods, classes, and constants through interface inheritance. Methods that do not have a hierarchal relationship, as we'd see in class inheritance, can be grouped into a module and shared with any number of classes that we like. Modules are primarily used for grouping related methods together and for namespacing. Modules can not instantiate an object.
 
 See below for code sample.
 
