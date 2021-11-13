@@ -83,26 +83,6 @@ If a class is a blueprint of what an objects state and behaviors will represent,
 
 Modules are containers that allow you to group methods, classes, and constants through interface inheritance. Methods that do not have a hierarchal relationship, as we'd see in class inheritance, can be grouped into a module and shared with any number of classes that we like. Modules are primarily used for grouping related methods together and for namespacing. Modules can not instantiate an object.
 
-### What is a mixin
-
-A mixin is a module containing methods that we 'mixin' to a class by the use of the `#include` method. By mixing a module into a class, instances of that class, and any class inheriting from it, have access to the methods defined within the module. This is done when a 'has-a' relationship (e.g. human has-a ability to read) exists and there is no hierarchal relationship present. Grouping behaviors into a module in this fashion helps keep our code DRY.
-
-```ruby
-module Readable
-  def read
-    puts "I can read books!"
-  end
-  # any class with Readable mixed in has access to the methods here
-end
-
-class Human < Primate
-  include Readable
-  # Readable module is mixed in with the include method
-end
-
-Human.new.read # I can read books!
-```
-
 ### What is namespacing
 
 Namespacing is a way of organizing classes together that may be related in some way and can aide in making our code easier to understand. This also allows us to create classes of the same name but nested within different modules which can keep code organized and easy to undersatnd in complex codebases. Any class defined within a module can only be referenced by prepending the module name to and the namespace resolution operator(`::`) before the class name. 
@@ -321,15 +301,41 @@ Again we've created two instances of the `Person` class `chris` and `adrienne`. 
 
 ### Class Inheritance
 
-### Super
+---
 
-### Mixing in Modules
+### Interface Inheritance
+
+#### Mixing in Modules
+
+A mixin is a module containing methods that we 'mixin' to a class by the use of the `#include` method. By mixing a module into a class, instances of that class, and any class inheriting from it, have access to the methods defined within the module. This is done when a 'has-a' relationship (e.g. human has-a ability to read) exists and there is no hierarchal relationship present. Grouping behaviors into a module in this fashion helps keep our code DRY.
+
+```ruby
+module Readable
+  def read
+    puts "I can read books!"
+  end
+  # any class with Readable mixed in has access to the methods here
+end
+
+class Human < Primate
+  include Readable
+  # Readable module is mixed in with the include method
+end
+
+Human.new.read # I can read books!
+```
+
+---
 
 ### Inheritance vs Modules
 
+---
+
 ### Method Lookup Path
 
-### Private Protected and Public
+---
+
+### Method Access Control: Private Protected and Public
 
 ---
 
