@@ -187,6 +187,7 @@ p chris
 
 ## Writing custom getter method vs accessor method
 
+```ruby
 class Person
   def initialize(ssn)
     @ssn = ssn
@@ -198,6 +199,7 @@ class Person
 end
 
 p Person.new('555-555-5555').ssn
+```
 
 ## Class inheritance encapsulation and polymorphism
 
