@@ -20,23 +20,23 @@
   - [Writing custom getter method vs accessor method](#writing-custom-getter-method-vs-accessor-method)
 
 - [Method Access Control](#method-access-control)
-  - Public
-  - Private
-  - Protected
+  - [Public](#public)
+  - [Private](#private)
+  - [Protected](#protected)
 
 - [Inheritance](#inheritance)
-  - Class Inheritance
-  - Interface Inheritance
+  - [Class Inheritance](#class-inheritance)
+  - [Interface Inheritance](#interface-inheritance)
   - [Method lookup path](#method-lookup-path)
-  - Super
-  - Object Methods
-  - Variable Scope with Inheritance
+  - [Super](#super)
+  - [Object Methods](#object-methods)
+  - [Variable Scope with Inheritance](#variable-scope-with-inheritance)
 
 - [Polymorphism and Encapsulation](#polymorphism-and-encapsulation)
-  - Polymorphism
-    - Polymorphism Through Inheritance
-    - Polymorphism Through Duck Typing
-  - Encapsulation
+  - [Polymorphism](#polymorphism)
+    - [Polymorphism Through Inheritance](#polymorphism-through-inheritance)
+    - [Polymorphism Through Duck Typing](#polymorphism-through-duck-typing)
+  - [Encapsulation](#encapsulation)
 
   - [Class inheritance, encapsulation, and polymorphism](#class-inheritance-encapsulation-and-polymorphism)
 
@@ -402,6 +402,12 @@ p Person.new('555-555-5555').ssn
 
 ## Method Access Control
 
+### Public
+
+### Private
+
+### Protected
+
 - By default all methods in a class are **public**.
 - **Private methods** are not accessible in the public interface, but can be accessed through a public instance method _only by the calling object_.
 - **Protected methods** are not accessible in the public interface, but can be accessed through a public instance method _by the calling object or another instance of the class_.
@@ -441,13 +447,41 @@ p chris > dan
 ---
 
 
-## Class inheritance
+## Inheritance
 
-## Encapsulation
+### Class Inheritance
 
-## Polymorphism
+### Interface Inheritance
+
+### Method lookup path
+
+### Super
+
+### Object Methods
+
+### Variable Scope with Inheritance
+
+---
+
+## Polymorphism and Encapsulation
+
+### Polymorphism
+
+  #### Polymorphism Through Inheritance
+
+  #### Polymorphism Through Duck Typing
+
+### Encapsulation
+
+---
 
 ## Modules
+
+### Mixin Modules
+
+### Namespacing
+
+### Module Methods
 
 There are 3 main uses of a module:
 
@@ -506,9 +540,23 @@ end
 p BigNumber.times_99(10001)
 ```
 
-## Method lookup path
+---
 
 ## self
+
+### Inside Instance Methods
+
+### Inside Class Methods
+
+### Inside Class Definitions
+
+### Inside Mixin Modules
+
+### Outside Any Class
+
+### [Calling methods with self](#calling-methods-with-self)
+
+### [More about self](#more-about-self)
 
 Within an **instance method** it refers to the _calling object_.
 Within a **class method** definition or in a **class body** it refers to the _class_.
@@ -541,15 +589,31 @@ Person.new.instance_hello
 Greetable.module_hello
 ```
 
-## Calling methods with self
-
-## More about self
-
-## Reading OO code
+---
 
 ## Fake operators and equality
 
-## Truthiness
+### Equivalence
+
+  #### ==
+
+  #### equal? and object_id
+
+  #### ===
+
+  #### eql?
+
+### Fake Operators
+
+  #### Comparison Methods
+
+  #### Right and Left Shift
+
+  #### Plus
+
+  #### Element Setters and Getters
+
+---
 
 ## Working with collaborator objects
 
@@ -596,3 +660,5 @@ lib << walk_in_woods
 
 puts lib.books
 ```
+
+---
