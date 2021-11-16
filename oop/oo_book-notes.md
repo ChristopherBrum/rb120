@@ -201,7 +201,28 @@ adrienne.greet   # Nice, to see you!
 
 This example demonstrates how state(instance variables and their values) is actualized at the instantiation of a new object and unique to each object, while behavior is defined within the class and all instances of an object share the same behavior. Two new `Person` objects are instantiated and saved to `chris` and `adrienne`. The values saved tpo their respective states is unique to each object. The behaviors available to each object are the same (`#tell_about_self` and `#greet`), but the outputs can be unique when each objects unique state is included in the output, like we see when `chris` and `adrienne` invoke the same method `#tell_about_self` but receive different outputs.
 
-### Initializing a New Behavior (???)
+### Attributes vs. State
+
+- An instance variable is named by the class, but each object created from the class creates its own copy of the instance variable, and its value contributes to the overall state of the object. With this definition, note in particular that the instance variable is actually not part of the class; therefore, it can't be inherited. The subclass does know about the name, but it's merely using that name as a handle for the value it contains.
+
+- An attribute is an instance variable **name and value**. More specifically, an attribute must be accessible outside the methods defined by the class; this means you need either a getter or setter method, or both. If both are missing, you only have an instance variable and a value (you can think of this as a "private attribute" if you want, but it doesn't really help). An attribute's getter and setter **methods** will be inherited by a superclass, but, the instance variable name and value behind the attribute do not participate in inheritance.
+
+- Every object has state. State is the collection of all instance variables and their values defined for an object. Since state is part of the object, not the class, state is not inherited.
+
+As per Pete's description: the following list should keep you out of trouble, at least for now:
+
+- A subclass inherits the methods of the superclass.
+- Instance variables and their values are not inheritable.
+- Attribute getters and setters are methods, so they are inheritable
+- Attribute names and their values are just instance variables and values, so they are not inheritable
+- State is a tied directly to individual objects, so is not inheritable.
+
+As per Karl's description:
+
+- Attributes are an abstraction, and represent the properties/ characteristics of an object
+- Instance variables, e.g. `@age` are how we represent that abstraction in Ruby
+- Assignment to instance variables, e.g. `@age = age` are the way that we associate values with those attributes
+- The state of an object is the combination of all its attributes and their values
 
 #### Initialize
 
