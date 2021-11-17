@@ -29,7 +29,6 @@
   - [Interface Inheritance](#interface-inheritance)
   - [Method lookup path](#method-lookup-path)
   - [Super](#super)
-  - [Object Methods](#object-methods)
   - [Variable Scope with Inheritance](#variable-scope-with-inheritance)
 
 - [Polymorphism and Encapsulation](#polymorphism-and-encapsulation)
@@ -41,16 +40,16 @@
   - [Class inheritance, encapsulation, and polymorphism](#class-inheritance-encapsulation-and-polymorphism)
 
 - [Modules](#modules)
-  - Mixin Modules
-  - Namespacing
-  - Module Methods
+  - [Mixin Modules](#mixin-modules)
+  - [Namespacing](#namespacing)
+  - [Module Methods](#module-methods)
 
 - [self](#self)
-  - Inside Instance Methods
-  - Inside Class Methods
-  - Inside Class Definitions
-  - Inside Mixin Modules
-  - Outside Any Class
+  - [Inside Instance Methods](#inside-instance-method)
+  - [Inside Class Methods](#inside-class-methods)
+  - [Inside Class Definitions](#inside-class-definitions)
+  - [Inside Mixin Modules](#inside-mixin-modules)
+  - [Outside Any Class](#outside-any-class)
   - [Calling methods with self](#calling-methods-with-self)
   - [More about self](#more-about-self)
 
@@ -72,7 +71,7 @@
 
 ## OOP and Why it was Created
 
-OOP was created to deal with the growing complexity of programs and the web of interdependencies that inevitably would develop within procedural programs. These interdependencies made code bases very difficult to maintain and update without causing a ripple effect of bugs to occur.
+OOP was created to deal with the growing complexity of programs and the web of interdependencies that inevitably would develop within procedural programs. These interdependencies made code bases very difficult to maintain and update without causing a ripple effect of bugs to occur. OOP was created to be able to compartmentalize data so that it could be interacted with in a way that would not affect the rest of the program.
 
 ## Classes and objects
 
@@ -449,17 +448,129 @@ p chris > dan
 
 ## Inheritance
 
+**What?:** inheritance is when a class inherits behaviors from another class or from a module. We refer to these as _class inheritance_ and _interface inheritance_.
+
+**Why?:** inheritance allows us to group behaviors into a superclass and have more intricate behaviors within the subclasses. It also keeps our code DRY.
+
 ### Class Inheritance
+
+**How?:** class inheritance is possible when two classes have an 'is-a' relationship, meaning there is a natural hierarchal relationship between the two classes. For instance, a Human is-a type of Mammal. Therefore it would make sense for Human's to inherit the behavior of Mammals.
+
+```ruby
+class Mammal
+  def eats
+    puts "I eat food"
+  end
+end
+
+class Human < Mammal
+  def eats
+    puts "I eat pizza"
+  end
+end
+
+Mammal.new.eats
+Human.new.eats
+```
 
 ### Interface Inheritance
 
+**How?:** interface inheritance is possible when there is a 'has-a' relationship present. For instance, a Human 'is-a' Mammal and 'has-a(n)' ability to speak, but not all Mammals do. Therefore the ability to speak would be a good candidate to _mixin_ to the Human class via a _module_ using the `#include` method. 
+
+```ruby
+module Speakable
+  def speak
+    puts "I can speak"
+  end
+end
+
+class Mammal
+  def eats
+    puts "I eat food"
+  end
+end
+
+class Human < Mammal
+  include Speakable
+  
+  def eats
+    puts "I eat pizza"
+  end
+end
+
+Mammal.new.speak # throws an error
+Human.new.speak  # "I can speak"
+```
+
 ### Method lookup path
+
+**What?:** the method lookup path is the order in which Ruby looks for a method definition when it has been invoked.
+
+**Why?:** the order in which a method is looked for is important to understand in order to predict how or if a method definition will be found when invoked.
+
+**How?:** using the `::ancestors` class method on a class we can print out the method lookup path from a class. But here's the basic order  Ruby looks for a method when invoked on an object:
+
+1. Ruby looks for the definition within the class of the calling object.
+2. Then checks for any modules being mixed in.
+3. If there are multiple modules mixed in on multiple lines Ruby starts looking through the last module mixed in first.
+4. If the modules are included on one line, comma-separated, then Ruby will look through them in the order they are in.
+5. If the method is not found within the calling objects class or mixed in modules it will then look up the inheritance chain. Eventually reaching `BasicObject` class. 
+
+```ruby
+module Speakable
+  def speak
+    puts "I can speak"
+  end
+end
+
+class Mammal
+  def eats
+    puts "I eat food"
+  end
+end
+
+class Human < Mammal
+  include Speakable
+  
+  def eats
+    puts "I eat pizza"
+  end
+end
+
+p Human.ancestors # [Human, Speakable, Mammal, Object, PP::ObjectMixin, Kernel, BasicObject]
+```
 
 ### Super
 
-### Object Methods
+**What?:** the `super` keyword is used to call methods further up the inheritance chain. If it is within a method definition, and that method is invoked, `super` will look for a method of the same name as it was defined in further up the inheritance chain and then invoke it.
+
+**How?:** super passed without `()` parenthesis will take all arguments passed to the originally invoked method and pass them to the method of the same name up the inheritance chain. Using parenthesis you can dictate which, if any, arguments are passed. 
+
+```ruby
+class Mammal 
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Human < Mammal
+  def initialize(name, nationality)
+    super(name)
+    @nationality = nationality
+  end
+end
+
+p Human.new('Chris', 'Portugese')
+```
 
 ### Variable Scope with Inheritance
+
+**Instance variables** are encapsulated within individual objects and cannot be extracted. They are scoped at the _object level_ and used to track an objects state. Because they are scoped at the object level they are accessible within all instance methods even if they haven't been initialized within it. If an instance variable that has not been initialized yet is referenced it returns `nil` instead of raising an error.
+
+**Class variables** are scoped at the _class level_ and exhibit 2 main behaviors:
+
+1. All objects share 1 copy of the class variable.
+2. Class methods can access a class variable regardless of where it's been initialized.
 
 ---
 
@@ -467,11 +578,110 @@ p chris > dan
 
 ### Polymorphism
 
-  #### Polymorphism Through Inheritance
+**What?:** Polymorphism is the ability to invoke the same method on different objects.
 
-  #### Polymorphism Through Duck Typing
+**Why?:** Polymorphism reduces dependencies within our program and maintains code reusability.
+
+**How?:** When two or more objects have the same method called on them we are performing polymorphism.
+
+```ruby
+Array.new # []
+Hash.new # {}
+String.new # ''
+
+[].class # Array
+'Hi'.class # String
+123.class # Integer
+```
+
+#### Polymorphism Through Inheritance
+
+**How?:** Polymorphism through inheritance is achieved in one of two ways:
+
+1. An instance of a subclass inherits a method from a superclass.
+
+```ruby
+class Mammal
+  def eats
+    puts "I eat"
+  end
+end
+
+class Human < Mammal
+end
+
+Mammal.new.eats # I eat
+Human.new.eats # I eat
+```
+
+2. A subclass overrides a more generic version of a method with a more specific method of the same name.
+
+```ruby
+class Mammal
+  def eats
+    puts "I eat"
+  end
+end
+
+class Human < Mammal
+  def eats
+    puts "I eat pizza"
+  end
+end
+
+Mammal.new.eats # I eat
+Human.new.eats # I eat pizza
+```
+
+#### Polymorphism Through Duck Typing
+
+**How?:** Polymorphism through duck typing occurs when classes of unrelated types can have the same method invoked on them.
+
+```ruby
+class Mammal
+  def eats
+    puts "I eat"
+  end
+end
+
+class Human # no longer inheriting, classes are unrelated
+  def eats
+    puts "I eat pizza"
+  end
+end
+
+Mammal.new.eats # I eat
+Human.new.eats # I eat pizza
+```
 
 ### Encapsulation
+
+**What?:** Encapsulation is hiding pieces of functionality from the rest of a code base, and is a form of data protection created so that data cannot be accessed or manipulated in unwanted ways. Ruby achieves this by creating objects and then creating methods to interact with the data that each object encapsulates within itself.
+
+**Why?:** Encapsulation allows us to create boundaries within our programs which reduces the dependencies within our program our makes our code more maintainable. 
+
+**How?:** In Ruby polymorphism is achieved by creating objects and defining behaviors to interact with those objects and the data they contain. The behaviors we define will separate the _public interface_ (methods you call on them) and the _implementation_ (what the methods execute). This allows developers to think on a new level of abstraction.
+
+```ruby
+class Person
+  def initialize(age)
+    @age = age
+  end
+  
+  def adult?
+    age >= 18
+  end
+
+  private
+  
+  attr_reader :age
+  
+end
+
+chris = Person.new(38)
+chris.adult? # true
+chris.age # raises NoMethodError
+```
 
 ---
 
@@ -511,19 +721,13 @@ Human.new.swim
 # namespacing
 
 module WestCoast
-  class BaseballTeam; end
-  
-  class FootballTeam; end
-  
-  class HockeyTeam; end
+  class BaseballTeam
+  end
 end
 
 module EastCoast
-  class BaseballTeam; end
-  
-  class FootballTeam; end
-  
-  class HockeyTeam; end
+  class BaseballTeam
+  end
 end
 
 p WestCoast::BaseballTeam.new 
