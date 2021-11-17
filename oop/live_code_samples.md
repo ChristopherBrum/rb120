@@ -401,19 +401,61 @@ p Person.new('555-555-5555').ssn
 
 ## Method Access Control
 
+**What?:** Method access controls are tools that help us separate the public interface of objects with their implementation.
+
+**Why?:** This controls how data is accessed and manipulated within custom objects we've defined. These are the tools that allow us to define the public interface of an object and its implementation.
+
 ### Public
+
+By default all methods in a class are **public**.
+
+```ruby
+class Person
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+p Person.new('Chris').name # Chris
+```
 
 ### Private
 
+**Private methods** are not accessible in the public interface, but can be accessed through a public instance method _only by the calling object_.
+
+```ruby
+class Person
+  attr_reader :name
+  
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+
+  def adult?
+    age >= 18
+  end
+  
+  private
+  
+  attr_reader :age
+end
+
+chris = Person.new('Chris', 38)
+
+p chris.name # Chris
+p chris.age # raises NoMethodError
+p chris.adult? # true
+```
+
 ### Protected
 
-- By default all methods in a class are **public**.
-- **Private methods** are not accessible in the public interface, but can be accessed through a public instance method _only by the calling object_.
 - **Protected methods** are not accessible in the public interface, but can be accessed through a public instance method _by the calling object or another instance of the class_.
 
 ```ruby
 class Person
-  
   attr_reader :name
   
   def initialize(name, age)
@@ -425,22 +467,19 @@ class Person
     age >= 18
   end
   
-  
   def >(other_person)
     age > other_person.age
   end
   
-  # private
   protected
   
   attr_reader :age
-  
 end
 
 chris = Person.new('Chris', 38)
 dan = Person.new('Daniel', 22)
 
-p chris > dan
+p chris > dan # true
 ```
 
 ---
@@ -450,7 +489,7 @@ p chris > dan
 
 **What?:** inheritance is when a class inherits behaviors from another class or from a module. We refer to these as _class inheritance_ and _interface inheritance_.
 
-**Why?:** inheritance allows us to group behaviors into a superclass and have more intricate behaviors within the subclasses. It also keeps our code DRY.
+**Why?:** inheritance allows us to group behaviors into a superclass and have more intricate behaviors within the subclasses. This keeps keeps our code DRY.
 
 ### Class Inheritance
 
