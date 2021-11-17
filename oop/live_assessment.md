@@ -53,12 +53,12 @@
   - [Calling methods with self](#calling-methods-with-self)
 
 - [Fake operators and equality](#fake-operators-and-equality)
-  - Equivalence
+  - [Equivalence](#equivalence)
     - ==
     - equal? and object_id
     - ===
     - eql?
-  - Fake Operators
+  - [Fake Operators](#fake-operators)
     - Comparison Methods
     - Right and Left Shift
     - Plus
@@ -635,7 +635,7 @@ p Human.new('Chris', 'Portugese')
 
 **What?:** Polymorphism is the ability to invoke the same method on different objects.
 
-**Why?:** Polymorphism reduces dependencies within our program and maintains code reusability.
+**Why?:** Polymorphism reduces dependencies within our program and makes them more maintainable.
 
 **How?:** When two or more objects have the same method called on them we are performing polymorphism.
 
@@ -653,7 +653,7 @@ String.new # ''
 
 **How?:** Polymorphism through inheritance is achieved in one of two ways:
 
-1. An instance of a subclass inherits a method from a superclass.
+1. An instance of a subclass **inherits** a method from a superclass.
 
 ```ruby
 class Mammal
@@ -669,7 +669,7 @@ Mammal.new.eats # I eat
 Human.new.eats # I eat
 ```
 
-2. A subclass overrides a more generic version of a method with a more specific method of the same name.
+2. A subclass **overrides** a more generic version of a method with a more specific method of the same name.
 
 ```ruby
 class Mammal
@@ -895,23 +895,134 @@ puts self
 
 ### Equivalence
 
-  #### ==
+Because everything in Ruby is an object, sort of, all the custom classes we define will end up inheriting from other classes, most importantly the `Object` class and and the `BasicObject` class. We need to be aware of this because there are certain behaviors that our custom classes will inherit that most built in Ruby object types have overridden to suit that object types needs. In order for our custom classes to respond in the ways we prefer we need to understand some of the behaviors they're inheriting.
 
-  #### equal? and object_id
+#### ==
 
-  #### ===
+- for most objects, the `==` operator compares the values of the objects, and is frequently used.
+- the `==` operator is actually a method. Most built-in Ruby classes, like Array, String, Integer, etc. provide their own `==` method to specify how to compare objects of those classes.
+- by default, `BasicObject#==` does not perform an equality check; instead, it returns `true` if two objects are the same object. This is why other classes often provide their own behavior for `#==`.
+- if you need to compare custom objects, you should define the `==` method.
 
-  #### eql?
+The `#==` inherited from the `BasicObject` class compares if the calling object and the object passed in are the same object. All custom objects will have this instance method available to them from the `BasicObject` class. More often it is useful to override the `#==` method to suit a specific need of the custom class.
+
+#### equal? and object_id
+
+- the `equal?` method goes one level deeper than `==` and determines whether two variables not only have the same value, but also whether they point to the same object.
+- do not define `equal?`.
+- the `equal?` method is not used very often.
+- calling object_id on an object will return the object's unique numerical value. Comparing two objects' object_id has the same effect as comparing them with `equal?`.
+
+#### ===
+
+- used implicitly in case statements.
+- like `==`, the `===` operator is actually a method.
+- you rarely need to call this method explicitly, and only need to implement it in your custom classes if you anticipate your objects will be used in case statements, which is probably pretty rare.
+
+#### eql?
+
+- used implicitly by Hash.
+- very rarely used explicitly.
 
 ### Fake Operators
 
-  #### Comparison Methods
+#### Comparison Methods
 
-  #### Right and Left Shift
+Defining custom comparison methods can be quite handy. To do so we can define a method with the appropriate `operator` as the and and an argument to compare with. Then within the body use the getter method for the value you'd like to compare with the comparison method of the appropriate type.
 
-  #### Plus
+```ruby
+class Person
+  attr_reader :name
+  
+  def initialize(name)
+    @name = name
+  end
+  
+  def ==(other_person)
+    name == other_person.name
+  end
+end
 
-  #### Element Setters and Getters
+dan = Person.new('Dan')
+chris = Person.new('Chris')
+
+p dan == chris      # false
+
+chris2 = Person.new('Chris')
+p chris == chris2   # true
+```
+
+The `Comparable` module can be included to a class and that will give the class an easy way to customize comparison methods.
+
+```ruby
+class Person
+  include Comparable
+  
+  attr_reader :name, :age
+  
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+  
+  def <=>(other_person)
+    age <=> other_person.age
+  end
+end
+
+dan = Person.new('Dan', 38)
+chris = Person.new('Chris', 45)
+
+p dan > chris    # false
+p dan < chris    # true
+p dan == chris   # false
+```
+
+#### Right and Left Shift
+
+The same can be done with the left and right shift methods (`<<`, `>>`).
+
+```ruby
+class Person
+  attr_reader :friends
+  
+  def initialize(name)
+    @name = name
+    @friends = []
+  end
+  
+  def <<(person)
+    @friends << person
+  end
+end
+
+dan = Person.new('Dan')
+chris = Person.new('Chris')
+samantha = Person.new('Sam')
+
+p dan.friends    # []
+dan << chris
+dan << samantha
+p dan.friends    # [#<Person:0x000055f36ddaa500 @name="Chris", @friends=[]>,                     #<Person:0x000055f36ddaa488 @name="Sam", @friends=[]>]
+```
+
+#### Element Setters and Getters
+
+The syntactical sugar that allows us to reference elements of an array or set elements within an array can also be customized.
+
+```ruby
+class Team
+  # ... rest of code omitted for brevity
+
+  def [](idx)
+    members[idx]
+  end
+
+  def []=(idx, obj)
+    members[idx] = obj
+  end
+end
+```
 
 ---
 
