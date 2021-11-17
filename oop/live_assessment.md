@@ -51,7 +51,6 @@
   - [Inside Mixin Modules](#inside-mixin-modules)
   - [Outside Any Class](#outside-any-class)
   - [Calling methods with self](#calling-methods-with-self)
-  - [More about self](#more-about-self)
 
 - [Fake operators and equality](#fake-operators-and-equality)
   - Equivalence
@@ -256,56 +255,74 @@ HumanBeing.say_human_thing # Just do it
 
 ### Getter Methods
 
-### Setter Methods
-
-### Use accessor methods to create setter and getter methods
-
-Accessors methods are built in short-cuts in Ruby that allow us to define getter methods, setter methods, or both using the **accessor methods**: `attr_reader`, `attr_writer` , and `attr_accessor`. 
+Getter methods are the way in which we can reference the data stored within an object using instance variables. Because the value of an instance variable is not accessible from outside of the object we must define a getter method in order to access the value.
 
 ```ruby
 class Person
-  
-  # attr_accessor :name, :age
-  # attr_writer :name, :age
-  attr_reader :name
-  
-  def initialize(name, age)
-    @name = name
-    @age = age
+  def initialize(name)
+    @name = name 
   end
   
-  def adult?
-    age >= 18
+  def name
+    @name
   end
-  
-#   def name
-#     @name
-#   end
-  
-#   def name=(new_name)
-#     @name = new_name
-#   end
-  
-#   def age
-#     @age
-#   end
-  
-#   def age=(new_age)
-#     @age = new_age
-#   end
-  
-  private
-
-  attr_reader :age
-  
 end
 
-chris = Person.new('Chris', 38)
-p chris.name
-p chris.adult?
+chris = Person.new("Chris")
 
-# p chris.name = "Christopher"
-# p chris.age = 21
+p chris.name # Chris
+```
+
+### Setter Methods
+
+Like a getter method, there is no way to update or change the value of an instance variable within an object unless we define a behavior to do so.
+
+```ruby
+class Person
+  def initialize(name)
+    @name = name 
+  end
+  
+  def name
+    @name
+  end
+  
+  def name=(new_name)
+    @name = new_name
+  end
+end
+
+chris = Person.new("Chris")
+
+p chris.name # Chris
+chris.name = 'Christopher'
+p chris.name # Christopher
+```
+
+### Use accessor methods to create setter and getter methods
+
+Accessors methods are built in short-cuts in Ruby that allow us to define getter methods, setter methods, or both using the **accessor methods**: `attr_reader`, `attr_writer` , and `attr_accessor`.
+
+```ruby
+class Person
+  attr_accessor :name
+  attr_reader :age
+  attr_writer :age
+  
+  def initialize(name, age)
+    @name = name 
+    @age = age
+  end
+end
+
+chris = Person.new("Chris", 38)
+
+chris.name = 'Christopher'
+p chris.name # Christopher
+
+p chris.age # 38
+chris.age = 100 
+p chris.age # 100
 ```
 
 ## Referencing and setting instance variables vs using getters and setters
@@ -483,7 +500,6 @@ p chris > dan # true
 ```
 
 ---
-
 
 ## Inheritance
 
@@ -728,19 +744,13 @@ chris.age # raises NoMethodError
 
 ### Mixin Modules
 
-### Namespacing
+**What?:** A module mixin is behaviors that have been defined in a module that we _mixin_ to a class so that instances of that class have access to those behaviors. This is useful when there is no hierarchal relationship present, but there is a 'has-a' relationship present. For example a Human _is a_ Mammal, therefore class inheritance makes sense in this situation, but a Human _has a(n)_ ability to speak, which would mean the behaviors associated with 'Speak' would make more sense being mixed in as a module.
 
-### Module Methods
+**Why?:** Generally modules are mixed in when particular behavior doesn't fit within the hierarchy of class inheritance. Instead of defining these behaviors separately within individual classes we can define them once, in a module, and then mix the into classes as needed. This helps keep our code DRY.
 
-There are 3 main uses of a module:
-
-- **Interface Inheritance via Mixins**
-- **Namespacing**
-- **Module Methods**
+**How?:** Modules can be mixed into a class by using the `#include` method. \
 
 ```ruby
-# Interface inheritance / Mixins
-
 module Swimable
   def swim
     puts "I can swim"
@@ -756,9 +766,17 @@ class Human < Mammal
 end
 
 Human.new.swim
+```
 
-# namespacing
+### Namespacing
 
+**What?:** Is when you group similar classes under a module.
+
+**Why?:** This gives us a way to group classes together without using inheritance and ensures that similarly named classes from elsewhere in our code will not become confused with one another.
+
+**How?:** We define a method and then define our classes within our module. In order to reference the classes namespaced with we must prepend the class name with the module name and the namespace resolution operator (`::`).
+
+```ruby
 module WestCoast
   class BaseballTeam
   end
@@ -771,9 +789,17 @@ end
 
 p WestCoast::BaseballTeam.new 
 p EastCoast::BaseballTeam.new
+```
 
-# module methods
+### Module Methods
 
+**What?:** A module method uses a module as a container for defining a behavior.
+
+**Why?:** Module methods are useful for defining a method that doesn't logically fit elsewhere in your code.
+
+**How?:** Define a module and within it define a method with `self` prepending the method name, like you would a class method. 
+
+```ruby
 module BigNumber
   def self.times_99(num)
     num * 99
@@ -789,48 +815,79 @@ p BigNumber.times_99(10001)
 
 ### Inside Instance Methods
 
+When the `self` reserved word is used within an instance method definition `self` will be referring to the calling object.
+
+```ruby
+class Person
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+  
+  def name
+    p self
+  end
+  
+end
+
+Person.new('Chris', 38).name #<Person:0x00005568279e5360 @name="Chris", @age=38>
+```
+
 ### Inside Class Methods
+
+When `self` is used within a class method, `self` will refer to the class itself.
+
+```ruby
+class Person
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+  
+  def self.name
+    self
+  end
+  
+end
+
+p Person.name # Person
+```
 
 ### Inside Class Definitions
 
+If `self` is called anywhere within a class body definition it will be referring to the class itself.
+
+```ruby
+class Person
+  puts self
+end
+
+# outputs Person
+```
+
 ### Inside Mixin Modules
+
+If `self` is called anywhere within a module body definition it will be referring to the module itself.
+
+```ruby
+module Personable
+  puts self
+end
+
+# outputs Personable
+```
 
 ### Outside Any Class
 
-### [Calling methods with self](#calling-methods-with-self)
-
-### [More about self](#more-about-self)
-
-Within an **instance method** it refers to the _calling object_.
-Within a **class method** definition or in a **class body** it refers to the _class_.
-Within a **module method definition** or in a **module body**it refers to the _module_. 
+When `self` is called outside of any class it will refer to the _main object_, which is the object in which your code would be written inside.
 
 ```ruby
-module Greetable
-  def self.module_hello
-  # self referencing the module
-    puts "Hi from the #{self} module"
-  end
-end
+puts self
 
-class Person
-  include Greetable
-
-  def self.class_hello
-    # self referencing the class
-    puts "Hi from the #{self} class"
-  end
-  
-  def instance_hello
-    #self referencing the object
-    puts "Hi from an instance of the #{self.class}, here's self: #{self}"
-  end
-end
-
-Person.class_hello
-Person.new.instance_hello
-Greetable.module_hello
+# outputs main
 ```
+
+### [Calling methods with self](#calling-methods-with-self)
 
 ---
 
