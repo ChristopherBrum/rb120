@@ -1028,10 +1028,31 @@ end
 
 ## Working with collaborator objects
 
-- A collaborator object is an object (usually a custom object) stored as a state within another object.
-- In the code below instances of the `Book` class are collaborator objects of the `Library` class
+**What?:** A collaborator object is an object (usually a custom object) stored as a state within another object.
+
+**Why?:** They connect various actors within your program, allowing us to chop and compartmentalize the problem that you're trying to solve with your program.
+
+**How?:** A collaborator object can be initialized at instantiation of an object or it can be added to an objects state after instantiation.
 
 ```ruby
+## Collaborators added at instantiation
+
+class Wizard
+  def initialize(name)
+    @name = name
+    @potions = [Potion.new] * 5
+  end
+end
+
+class Potion; end
+
+p Wizard.new("Gandalf") 
+#<Wizard:0x00005651b0df1238 @name="Gandalf", @potions=[#<Potion:0x00005651b0df1210>, #<Potion:0x00005651b0df1210>, #<Potion:0x00005651b0df1210>, #<Potion:0x00005651b0df1210>, #<Potion:0x00005651b0df1210>]>
+```
+
+```ruby
+## Collaborators added after instantiation
+
 class Library
   attr_reader :books
   
