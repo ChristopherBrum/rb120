@@ -12,6 +12,11 @@
   - [Class Variables](#class-variables)
   - [Class Methods](#class-methods)
 
+- [Scope](#scope)
+  - [Instance Variable Scope](#instance-variables-scope)
+  - [Class Variable Scope](#class-variables-scope)
+  - [Constant Scope](#constants-scope)
+
 - [Setters and Getters](#setters-and-getters)
   - [Getter Methods](#getter-methods)
   - [Setter Methods](#setter-methods)
@@ -248,6 +253,22 @@ end
 
 HumanBeing.say_human_thing # Just do it 
 ```
+
+---
+
+## Variable Scope
+
+### Instance Variable Scope
+
+**Instance Variables** behave the way we'd expect. The only thing to watch out for is to make sure the instance variable is initialized before referencing it.
+
+### Class Variable Scope
+
+**Class Variables** have a very insidious behavior of allowing sub-classes to override super-class class variables. Further, the change will affect all other sub-classes of the super-class. This is extremely unintuitive behavior, forcing some Rubyists to eschew using class variables altogether.
+
+### Constant Scope
+
+**Constants** have _lexical_ scope which makes their scope resolution rules very unique compared to other variable types. If Ruby doesn't find the constant using lexical scope, it'll then look at the inheritance hierarchy.
 
 ---
 
