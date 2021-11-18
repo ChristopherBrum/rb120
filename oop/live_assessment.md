@@ -12,7 +12,7 @@
   - [Class Variables](#class-variables)
   - [Class Methods](#class-methods)
 
-- [Scope](#scope)
+- [Variable Scope](#variable-scope)
   - [Instance Variable Scope](#instance-variables-scope)
   - [Class Variable Scope](#class-variables-scope)
   - [Constant Scope](#constants-scope)
